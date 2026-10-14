@@ -1,0 +1,71 @@
+name: APK Android
+
+# Se ejecuta cada vez que hay cambios en main (y en las ramas de trabajo de Claude).
+on:
+  push:
+    branches: [main, 'claude/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      LLAVE_PROPIA: ${{ secrets.GEMELOS_KEYSTORE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Probar los datos del juego y la dificultad
+        run: node --test tests/*.test.js
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      # Opcional: si guardas tu propia llave de firma en Settings > Secrets
+      # (GEMELOS_KEYSTORE en base64 y GEMELOS_KEYSTORE_PASSWORD), se usa esa.
+      - name: Llave de firma propia (si existe)
+        if: env.LLAVE_PROPIA != ''
+        run: |
+          echo "$LLAVE_PROPIA" | base64 -d > "$RUNNER_TEMP/gemelos.keystore"
+          echo "GEMELOS_KEYSTORE_FILE=$RUNNER_TEMP/gemelos.keystore" >> "$GITHUB_ENV"
+
+      - name: Copiar el juego dentro del APK
+        run: |
+          mkdir -p android/app/src/main/assets/www
+          cp -r index.html manifest.json css js iconos android/app/src/main/assets/www/
+
+      - name: Compilar APK
+        env:
+          GEMELOS_KEYSTORE_PASSWORD: ${{ secrets.GEMELOS_KEYSTORE_PASSWORD }}
+        run: gradle -p android assembleRelease --no-daemon
+
+      - name: Renombrar APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk "GemelosDelSol-1.0.${{ github.run_number }}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GemelosDelSol-apk
+          path: GemelosDelSol-*.apk
+
+      # Solo en main: crea una versión (Release) con el APK para descargarlo desde el teléfono.
+      - name: Publicar versión
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" "GemelosDelSol-1.0.${{ github.run_number }}.apk" \
+            --title "Gemelos del Sol 1.0.${{ github.run_number }}" \
+            --notes "Descarga el archivo .apk desde el celular Android e instálalo. Si ya tienes el juego, se actualiza sin perder tu partida." \
+            --latest
