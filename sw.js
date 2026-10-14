@@ -1,7 +1,7 @@
 /* Service worker: guarda el juego en el dispositivo para que funcione sin internet.
    IMPORTANTE: cambia el número de VERSION cada vez que publiques cambios,
    así los jugadores reciben la versión nueva. */
-const VERSION = 'gemelos-v1';
+const VERSION = 'gemelos-v2';
 const ARCHIVOS = [
   './',
   './index.html',
@@ -28,6 +28,7 @@ const ARCHIVOS = [
   './js/juego/escena-mapa.js',
   './js/juego/escena-pausa.js',
   './js/juego/escena-bestiario.js',
+  './js/juego/escena-nombre.js',
   './js/juego/escena-titulo.js',
   './js/mundos/maya/criaturas.js',
   './js/mundos/maya/musica.js',

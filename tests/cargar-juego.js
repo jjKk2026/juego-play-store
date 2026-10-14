@@ -18,7 +18,7 @@ function cargar() {
   ctx.G.arte = { PALETAS: {}, personaje() {}, colibri() {}, alux() {} };
   ctx.G.musica = { sil: (n) => Array(n).fill('.').join(' ') };
   ['js/juego/datos.js', 'js/juego/reglas.js', 'js/juego/mundos.js', 'js/juego/musica.js',
-    'js/mundos/maya/criaturas.js', 'js/mundos/maya/musica.js', 'js/mundos/maya/historia.js', 'js/mundos/maya/mapas.js']
+    'js/mundos/maya/criaturas.js', 'js/mundos/maya/musica.js', 'js/mundos/maya/historia.js', 'js/mundos/maya/mapas.js', 'js/juego/estado.js']
     .forEach(correr);
   // mundo.js usa G.entrada solo dentro de los eventos
   ctx.G.entrada = { usaTactil: () => false };

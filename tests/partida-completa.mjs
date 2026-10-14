@@ -52,7 +52,8 @@ while (true) {
 
 const resumen = await pagina.evaluate(() => ({
   combates: ROBOT.combates, precisos: ROBOT.precisos, derrotas: ROBOT.derrotas, subidas: ROBOT.subidas,
-  niveles: G.partida.heroes().map((h) => h.id + ' nv ' + h.nivel), fin: G.partida.bandera('fin'),
+  niveles: G.partida.heroes().map((h) => G.partida.nombre(h.id) + ' nv ' + h.nivel), fin: G.partida.bandera('fin'),
+  nombres: G.partida.gemelos(),
   guardado: !!localStorage.getItem('gemelos-del-sol.partida'),
   bestiario: Object.keys(JSON.parse(localStorage.getItem('gemelos-del-sol.bestiario') || '{}')).length
 }));
@@ -60,6 +61,7 @@ if (carpetaFotos) await pagina.screenshot({ path: path.join(carpetaFotos, 'ultim
 await navegador.close();
 
 console.log('\nResumen:', JSON.stringify(resumen));
+if (resumen.nombres !== 'Kin y Alex') errores.push('Los nombres no se guardaron: ' + resumen.nombres);
 if (errores.length || !resumen.fin) {
   console.error('\n✘ La partida NO se completó:\n' + errores.join('\n'));
   process.exit(1);

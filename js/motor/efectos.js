@@ -26,6 +26,7 @@
       if (G.opciones && !G.opciones.vibracion) fuerza *= 0.25;
       temblorFuerza = Math.max(temblorFuerza, fuerza);
       temblorT = Math.max(temblorT, dur || 0.3);
+      if (G.opciones && G.opciones.vibracion && fuerza > 3 && G.entrada) G.entrada.vibrarMando(Math.min(250, fuerza * 30), Math.min(1, fuerza / 8));
       if (navigator.vibrate && G.opciones && G.opciones.vibracion && fuerza > 3) {
         try { navigator.vibrate(Math.min(120, fuerza * 12)); } catch (e) { /* nada */ }
       }

@@ -139,7 +139,7 @@ test('todas las letras de los textos existen en la fuente del juego', () => {
   const codigo = fs.readFileSync(path.join(raiz, 'js/mundos/maya/mundo.js'), 'utf8');
   [...codigo.replace(/\\'/g, "’").matchAll(/'([^'\n]{8,})'/g)].forEach((m) => textos.push(m[1]));
   const malas = new Set();
-  textos.forEach((t) => [...t].forEach((c) => { if (!G.fuente.soporta(c)) malas.add(c); }));
+  textos.map((t) => t.replace(/\{(H|I|GEMELOS)\}/g, '')).forEach((t) => [...t].forEach((c) => { if (!G.fuente.soporta(c)) malas.add(c); }));
   assert.deepStrictEqual([...malas], [], 'Letras sin dibujo: ' + [...malas].join(' '));
 });
 
@@ -164,4 +164,22 @@ test('reglas: experiencia, técnicas y daño', () => {
   const preciso = G.reglas.danio({ fue: 20, mag: 10 }, { def: 5 }, { tipo: 'fisico', potencia: 1, preciso: true, azar: 1 }).danio;
   assert.strictEqual(debil.elemento, 'debil');
   assert.ok(debil.danio > base && preciso > base);
+});
+
+test('nombres de los gemelos: por defecto, limpieza y "y"/"e"', () => {
+  const P = G.partida;
+  P.nueva('maya');
+  // partida nueva sin nombres elegidos todavía: nombres del Popol Vuh
+  assert.strictEqual(P.nombre('hunahpu'), 'Hunahpú');
+  assert.strictEqual(P.gemelos(), 'Hunahpú e Ixbalanqué');
+  // campo vacío u "Omitir": nombres modernos por defecto
+  assert.strictEqual(P.ponerNombre('hunahpu', '   '), 'Ren');
+  assert.strictEqual(P.ponerNombre('ixbalanque', ''), 'Alex');
+  assert.strictEqual(P.gemelos(), 'Ren y Alex');
+  // limpia espacios, letras raras y lo deja en 10 letras como máximo
+  assert.strictEqual(P.ponerNombre('hunahpu', '  Sofía   María José  '), 'Sofía Marí');
+  assert.strictEqual(P.ponerNombre('ixbalanque', 'Iñaki😀{*}'), 'Iñaki');
+  assert.strictEqual(P.gemelos(), 'Sofía Marí e Iñaki');
+  // los diálogos cambian {H} e {I} por los nombres
+  assert.strictEqual(G.fuente.normalizar('{H} y {I}'), 'Sofía Marí y Iñaki');
 });

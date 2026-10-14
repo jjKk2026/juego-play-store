@@ -13,7 +13,6 @@
 (function () {
   const W = G.mundoMaya;
   const { TZ, AB, HU, IX, di } = W;
-  const tactil = () => G.entrada.usaTactil();
 
   // Para no repetir: un evento que solo pasa la primera vez.
   const unaVez = (bandera, fn) => async (esc, p) => {
@@ -29,9 +28,7 @@
       G.audio.efecto('colibri');
       await esc.decir([
         di(TZ, '¡Aquí estoy! Volaré siempre cerca de ustedes. Si necesitan una pista, búsquenme en el menú de pausa.'),
-        di(TZ, tactil()
-          ? 'Muévanse con la cruceta. *A* sirve para hablar y abrir cosas, *B* usa la habilidad del líder y *⇄* cambia quién lidera.'
-          : 'Muévanse con las flechas. *Z* sirve para hablar y abrir cosas, *X* usa la habilidad del líder y *C* cambia quién lidera.'),
+        di(TZ, G.entrada.explicacion()),
         di(TZ, 'Primero hablen con su abuela Ixmucané. Está junto a su casa, aquí a la izquierda.')
       ]);
       p.objetivo('abuela');
@@ -72,7 +69,7 @@
         { quien: 'Vucub Caquix', texto: '¡Yo soy el sol! ¡Yo soy la luz! ¿Para qué quieren otro sol, si me tienen a mí?' },
         di(HU, 'Tu brillo no calienta la milpa ni alumbra el camino. Tú no eres el sol.'),
         di(IX, 'Y entre tus plumas brilla algo que no es tuyo: ¡una chispa de la luz robada!'),
-        di(TZ, '¡Cuidado! Su punto débil es el *viento*: la *cerbatana* de Hunahpú le hará mucho daño. ¡Y no olviden el golpe preciso!')
+        di(TZ, '¡Cuidado! Su punto débil es el *viento*: la *cerbatana* de {H} le hará mucho daño. ¡Y no olviden el golpe preciso!')
       ]);
       const r = await esc.combate({ grupo: ['vucubCaquix'], jefe: true, musica: 'jefe' });
       if (r !== 'victoria') return;
@@ -114,7 +111,7 @@
         { quien: 'Zipacná', texto: '¿Ustedes vencieron a mi padre? ¡Yo soy Zipacná! Yo levanto las montañas y las cargo sobre mis hombros.' },
         di(IX, 'Conocemos tu historia. Una montaña terminó cayendo sobre ti.'),
         { quien: 'Zipacná', texto: '¡Ja! ¡Esta vez seré yo quien les lance la montaña!' },
-        di(TZ, '¡Es débil al *agua*! La *Ola del río* de Ixbalanqué y el *Eclipse gemelo* son buenas ideas. Cuidado con su pisotón.')
+        di(TZ, '¡Es débil al *agua*! La *Ola del río* de {I} y el *Eclipse gemelo* son buenas ideas. Cuidado con su pisotón.')
       ]);
       const r = await esc.combate({ grupo: ['zipacna'], jefe: true, musica: 'jefe' });
       if (r !== 'victoria') return;

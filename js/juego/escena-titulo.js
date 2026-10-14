@@ -122,8 +122,12 @@
       const e = G.partida.nueva('maya');
       const m = G.partida.mundo();
       const irAlMapa = () => G.motor.cambiar(new G.EscenaMapa(e.mapa), { dur: 0.6 });
-      if (m.inicio.escena) G.motor.cambiar(new G.EscenaComic(m.inicio.escena, irAlMapa), { dur: 0.8 });
-      else irAlMapa();
+      const historia = () => {
+        if (m.inicio.escena) G.motor.cambiar(new G.EscenaComic(m.inicio.escena, irAlMapa), { dur: 0.8 });
+        else irAlMapa();
+      };
+      // Primero se eligen los nombres de los gemelos (estilo Pokémon).
+      G.motor.cambiar(new G.EscenaNombre(historia), { dur: 0.6 });
     }
     dibujar(ctx) {
       const W = G.ANCHO, H = G.ALTO, t = this.t;
@@ -167,7 +171,7 @@
       G.fuente.texto(ctx, 'La luz de Xibalbá', W / 2, ty + 32, '#7ef2c8', { alinear: 'centro', escala: 1, borde: '#1a0f1f' });
       if (this.fase === 'inicio') {
         if (Math.floor(t * 2) % 2 === 0) {
-          G.fuente.texto(ctx, G.entrada.usaTactil() ? 'Toca la pantalla para empezar' : 'Presiona Z, Enter o toca la pantalla', W / 2, 140, COL.texto, { alinear: 'centro', borde: '#1a0f1f' });
+          G.fuente.texto(ctx, ({ tactil: 'Toca la pantalla para empezar', mando: 'Presiona A o Start', teclado: 'Presiona Z, Enter o toca la pantalla' })[G.entrada.modo()], W / 2, 140, COL.texto, { alinear: 'centro', borde: '#1a0f1f' });
         }
       } else {
         this.menu.dibujar(ctx);
@@ -184,7 +188,7 @@
       this.t = 0;
       this.lineas = [
         ['GEMELOS DEL SOL', 2, '#ffd166'], ['La luz de Xibalbá', 1, '#7ef2c8'], ['', 1],
-        ['Hunahpú e Ixbalanqué devolvieron la luz al mundo.', 1], ['Según el Popol Vuh, los gemelos subieron', 1], ['al cielo: uno se volvió el sol y el otro la luna.', 1], ['', 1],
+        ['{GEMELOS} devolvieron la luz al mundo.', 1], ['Según el Popol Vuh, los gemelos subieron', 1], ['al cielo: uno se volvió el sol y el otro la luna.', 1], ['', 1],
         ['Inspirado en el Popol Vuh,', 1, '#e8b64c'], ['libro sagrado del pueblo maya k\'iche\'.', 1, '#e8b64c'], ['', 1],
         ['Arte, música y sonidos creados con código.', 1], ['Instrumentos inspirados en flautas, ocarinas,', 1], ['tambores de tronco, sonajas y caracolas.', 1], ['', 1],
         ['Próximas aventuras:', 1, '#ff2a6d'],

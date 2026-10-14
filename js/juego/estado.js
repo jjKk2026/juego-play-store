@@ -78,7 +78,32 @@
     poner(k, v) { e.banderas[k] = v === undefined ? true : v; },
     abierto(id) { return !!e.abiertos[id]; },
     abrir(id) { e.abiertos[id] = true; },
-    objetivo(id) { if (id !== undefined) e.objetivo = id; return e.objetivo; }
+    objetivo(id) { if (id !== undefined) e.objetivo = id; return e.objetivo; },
+
+    // ---------------- Nombres (datos globales para los diálogos) ----------------
+    // Partidas guardadas antes de existir esta opción conservan los nombres del Popol Vuh.
+    nombre(id) {
+      const n = e && e.nombres && e.nombres[id];
+      if (n) return n;
+      return (e && e.nombres ? G.datos.NOMBRES_POR_DEFECTO[id] : null) || G.datos.HEROES[id].nombre;
+    },
+    ponerNombre(id, texto) {
+      const limpio = Partida.limpiarNombre(texto);
+      e.nombres = e.nombres || {};
+      e.nombres[id] = limpio || G.datos.NOMBRES_POR_DEFECTO[id];
+      return e.nombres[id];
+    },
+    // Quita espacios de más y letras que el juego no sabe dibujar.
+    limpiarNombre(texto) {
+      const t = [...String(texto || '')].filter((c) => G.fuente.soporta(c) && c !== '*' && c !== '{' && c !== '}').join('');
+      return t.replace(/\s+/g, ' ').trim().slice(0, G.datos.LARGO_NOMBRE);
+    },
+    // "Ren y Alex", "Hunahpú e Ixbalanqué" (se usa "e" antes de i- / hi-).
+    gemelos() {
+      const a = Partida.nombre('hunahpu'), b = Partida.nombre('ixbalanque');
+      const conE = /^(h?[iíIÍ])(?![aeouáéóú])/.test(b.toLowerCase());
+      return a + (conE ? ' e ' : ' y ') + b;
+    }
   };
 
   G.partida = Partida;

@@ -146,9 +146,17 @@
 
   const REEMPLAZOS = { '—': '-', '–': '-', '…': '...', '“': '"', '”': '"', '‘': "'", '’': "'", 'à': 'á', 'è': 'é', 'ì': 'í', 'ò': 'ó', 'ù': 'ú' };
 
+  // {H}, {I} y {GEMELOS} se cambian por los nombres que eligió el jugador.
+  function nombres(texto) {
+    if (texto.indexOf('{') < 0) return texto;
+    const P = G.partida;
+    const n = (id) => (P && P.nombre ? P.nombre(id) : G.datos.HEROES[id].nombre);
+    return texto.replace(/\{H\}/g, () => n('hunahpu')).replace(/\{I\}/g, () => n('ixbalanque'))
+      .replace(/\{GEMELOS\}/g, () => (P && P.gemelos ? P.gemelos() : n('hunahpu') + ' e ' + n('ixbalanque')));
+  }
   function normalizar(texto) {
     let r = '';
-    for (const c of String(texto)) r += REEMPLAZOS[c] !== undefined ? REEMPLAZOS[c] : c;
+    for (const c of nombres(String(texto))) r += REEMPLAZOS[c] !== undefined ? REEMPLAZOS[c] : c;
     return r;
   }
   function glifo(c) { return glifos[c] || glifos['?']; }

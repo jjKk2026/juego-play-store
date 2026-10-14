@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -94,6 +97,89 @@ public class MainActivity extends Activity {
     public void onWindowFocusChanged(boolean tieneFoco) {
         super.onWindowFocusChanged(tieneFoco);
         if (tieneFoco) pantallaCompleta();
+    }
+
+    // ------------------------------------------------------------------
+    // MANDOS BLUETOOTH (8BitDo, Xbox, PlayStation, controles Android...)
+    // Android entrega los botones del mando como "teclas". Aquí se traducen
+    // a los botones del juego y se envían a JavaScript (G.entrada.mandoNativo).
+    // Así funcionan junto con los botones táctiles de la pantalla.
+    // ------------------------------------------------------------------
+    private static String botonDeTecla(int codigo) {
+        switch (codigo) {
+            case KeyEvent.KEYCODE_BUTTON_A:
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+                return "a";       // A / Cruz: confirmar, hablar, golpe preciso
+            case KeyEvent.KEYCODE_BUTTON_B:
+                return "b";       // B / Círculo: cancelar, cerbatana o rugido
+            case KeyEvent.KEYCODE_BUTTON_X:
+            case KeyEvent.KEYCODE_BUTTON_Y:
+            case KeyEvent.KEYCODE_BUTTON_L1:
+            case KeyEvent.KEYCODE_BUTTON_R1:
+                return "x";       // X / Y / gatillos: cambiar de líder
+            case KeyEvent.KEYCODE_BUTTON_START:
+            case KeyEvent.KEYCODE_BUTTON_SELECT:
+            case KeyEvent.KEYCODE_MENU:
+                return "pausa";   // Start / Select: menú de pausa
+            case KeyEvent.KEYCODE_DPAD_UP:
+                return "arriba";
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                return "abajo";
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                return "izquierda";
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                return "derecha";
+            default:
+                return null;
+        }
+    }
+
+    private static boolean esMando(int fuente) {
+        return (fuente & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD
+                || (fuente & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK
+                || (fuente & InputDevice.SOURCE_DPAD) == InputDevice.SOURCE_DPAD;
+    }
+
+    private void enviarBoton(String boton, boolean presionado) {
+        web.evaluateJavascript("window.G && G.entrada && G.entrada.mandoNativo('" + boton + "'," + presionado + ")", null);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent evento) {
+        String boton = botonDeTecla(evento.getKeyCode());
+        if (boton != null && esMando(evento.getSource())) {
+            if (evento.getRepeatCount() == 0) {
+                if (evento.getAction() == KeyEvent.ACTION_DOWN) enviarBoton(boton, true);
+                else if (evento.getAction() == KeyEvent.ACTION_UP) enviarBoton(boton, false);
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(evento);
+    }
+
+    // Palanca analógica y cruceta "sombrero" (algunos mandos la mandan como eje).
+    private final boolean[] direcciones = new boolean[4]; // arriba, abajo, izquierda, derecha
+    private static final String[] NOMBRES_DIR = {"arriba", "abajo", "izquierda", "derecha"};
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent evento) {
+        if (esMando(evento.getSource()) && evento.getAction() == MotionEvent.ACTION_MOVE) {
+            float x = evento.getAxisValue(MotionEvent.AXIS_X);
+            float y = evento.getAxisValue(MotionEvent.AXIS_Y);
+            float hx = evento.getAxisValue(MotionEvent.AXIS_HAT_X);
+            float hy = evento.getAxisValue(MotionEvent.AXIS_HAT_Y);
+            if (Math.abs(hx) > Math.abs(x)) x = hx;
+            if (Math.abs(hy) > Math.abs(y)) y = hy;
+            boolean[] ahora = {y < -0.5f, y > 0.5f, x < -0.5f, x > 0.5f};
+            for (int i = 0; i < 4; i++) {
+                if (ahora[i] != direcciones[i]) {
+                    direcciones[i] = ahora[i];
+                    enviarBoton(NOMBRES_DIR[i], ahora[i]);
+                }
+            }
+            return true;
+        }
+        return super.dispatchGenericMotionEvent(evento);
     }
 
     // El botón "atrás" del teléfono abre o cierra la pausa; en el título, sale del juego.

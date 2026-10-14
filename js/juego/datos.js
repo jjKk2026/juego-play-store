@@ -119,5 +119,9 @@
     }
   };
 
-  G.datos = { ELEMENTOS, HEROES, TECNICAS, DOBLES, OBJETOS, NIVEL_MAX: 30 };
+  // Nombres que se usan si el jugador deja el campo vacío o elige "Omitir".
+  const NOMBRES_POR_DEFECTO = { hunahpu: 'Ren', ixbalanque: 'Alex' };
+  const LARGO_NOMBRE = 10;
+
+  G.datos = { ELEMENTOS, HEROES, TECNICAS, DOBLES, OBJETOS, NIVEL_MAX: 30, NOMBRES_POR_DEFECTO, LARGO_NOMBRE };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -11,8 +11,8 @@
 (function () {
   const TZ = { quien: "Tz'unun", retrato: 'colibri' };
   const AB = { quien: 'Abuela Ixmucané', retrato: 'abuela' };
-  const HU = { quien: 'Hunahpú', retrato: 'hunahpu' };
-  const IX = { quien: 'Ixbalanqué', retrato: 'ixbalanque' };
+  const HU = { quien: '{H}', retrato: 'hunahpu' };
+  const IX = { quien: '{I}', retrato: 'ixbalanque' };
   const ALUX = { quien: 'Alux', retrato: 'alux' };
   const di = (q, texto) => Object.assign({ texto }, q);
 
@@ -28,7 +28,7 @@
             actores: [{ id: 'hunahpu', x: 0.38, y: 0.95, esc: 4, dir: 2 }, { id: 'ixbalanque', x: 0.62, y: 0.95, esc: 4, dir: 1 }],
             textos: [
               { tipo: 'caja', texto: 'Hace mucho tiempo, cuando el mundo aún era joven...' },
-              { tipo: 'caja', texto: 'Los gemelos *Hunahpú* e *Ixbalanqué* vivían con su abuela, al borde de la selva.' }
+              { tipo: 'caja', texto: 'Los gemelos *{GEMELOS}* vivían con su abuela, al borde de la selva.' }
             ]
           }]
         },
@@ -224,8 +224,8 @@
   // ------------------------------ DIÁLOGOS ------------------------------
   const dialogos = {
     ceiba: [di(TZ, 'La gran *ceiba*, el árbol sagrado. Para los mayas, sus raíces llegan a Xibalbá, su tronco vive en la tierra y sus ramas sostienen el cielo.')],
-    alux1: [di(ALUX, '¡Ji ji! Soy un alux. Cuido esta milpa y este monte.'), di(ALUX, 'Los bloques con cara de jaguar solo se mueven con fuerza de jaguar. ¡Ixbalanqué tiene esa fuerza!')],
-    alux2: [di(ALUX, 'Psst... la cerbatana de Hunahpú despierta los cristales dormidos, aunque estén al otro lado del agua.')],
+    alux1: [di(ALUX, '¡Ji ji! Soy un alux. Cuido esta milpa y este monte.'), di(ALUX, 'Los bloques con cara de jaguar solo se mueven con fuerza de jaguar. ¡{I} tiene esa fuerza!')],
+    alux2: [di(ALUX, 'Psst... la cerbatana de {H} despierta los cristales dormidos, aunque estén al otro lado del agua.')],
     alux3: [di(ALUX, 'Dicen que detrás de los arbustos de esta esquina hay un tesoro... ¡Pero yo no dije nada! ¡Ji ji!')],
     estelaSelva: [di({ quien: 'Estela tallada' }, '"Antes de que hubiera sol, Vucub Caquix se alzaba orgulloso y decía: yo soy el sol, yo soy la luz, yo soy la luna."')],
     estelaTemplo: [di({ quien: 'Glifos en la piedra' }, '"El jaguar movió la piedra pesada. El cazador despertó el cristal con su soplo."'), di(TZ, '¡Una pista! Bloques para Ixbalanqué, cristales para la cerbatana de Hunahpú.')],
@@ -241,7 +241,7 @@
   // ------------------------------ PISTAS ------------------------------
   const pistas = {
     abuela: 'Hablen con su abuela Ixmucané. Está junto a su casa, a la izquierda del camino.',
-    templo: 'El templo está bajo las raíces de la gran ceiba, al norte, cruzando el puente del río. En el templo: la llave pequeña está en la sala del este; los bloques con cara de jaguar los mueve Ixbalanqué y los cristales despiertan con la cerbatana.',
+    templo: 'El templo está bajo las raíces de la gran ceiba, al norte, cruzando el puente del río. En el templo: la llave pequeña está en la sala del este; los bloques con cara de jaguar los mueve {I} y los cristales despiertan con la cerbatana de {H}.',
     cuevas: 'El camino a Xibalbá está al noreste de la selva, junto a unas rocas. ¡Ya pueden bajar!',
     cruce: 'Busquen el cruce de los cuatro caminos, al sur de donde llegamos. Recuerden el relato: el camino negro es el que lleva a Xibalbá.',
     canon: 'El cañón de Meauán está al sureste de las cuevas, pasando el puente del río. Allí se esconde Zipacná.',

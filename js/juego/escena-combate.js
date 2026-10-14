@@ -110,7 +110,7 @@
       G.partida.heroes().forEach((h, i) => {
         const s = R().stats(h);
         this.heroes.push({
-          tipo: 'heroe', id: h.id, ref: h, nombre: D().HEROES[h.id].nombre, s,
+          tipo: 'heroe', id: h.id, ref: h, nombre: G.partida.nombre(h.id), s,
           atb: 30 + Math.random() * 40, x: pos[i][0], y: pos[i][1], dx: 0, dy: 0,
           escudoT: 0, flash: 0, cuadro: 0
         });
@@ -989,7 +989,7 @@
       ctx.lineWidth = cerca ? 3 : 2;
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
       ctx.restore();
-      if (!a.presionado) G.fuente.texto(ctx, G.entrada.usaTactil() ? '¡Toca A!' : '¡A!', cx, cy + 22, '#ffd166', { alinear: 'centro', borde: COL.sombra });
+      if (!a.presionado) G.fuente.texto(ctx, G.entrada.usaTactil() ? '¡Toca A!' : '¡' + G.entrada.etiqueta('a') + '!', cx, cy + 22, '#ffd166', { alinear: 'centro', borde: COL.sombra });
     }
 
     dibujarCorte(ctx, u, k, color, n) {
@@ -1073,7 +1073,7 @@
         });
       }
       if (this.listos.length > 1 && this.menu && this.menu.tipo === 'comando') {
-        G.fuente.texto(ctx, (G.entrada.usaTactil() ? '⇄' : 'C') + ': cambiar', 6, 148, COL.tenue, { sombra: COL.sombra });
+        G.fuente.texto(ctx, G.entrada.etiqueta('x') + ': cambiar', 6, 148, COL.tenue, { sombra: COL.sombra });
       }
     }
   }

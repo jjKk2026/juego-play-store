@@ -375,7 +375,7 @@
       this.rastro = [];
       G.audio.efecto('colibri');
       G.fx.emitir(L0.x, L0.y - 12, { n: 14, color: [G.datos.HEROES[h.id].color, '#ffffff'], vel: 40, vida: 0.5 });
-      G.ui.aviso(`Ahora lidera ${G.datos.HEROES[h.id].nombre}`, G.datos.HEROES[h.id].color);
+      G.ui.aviso(`Ahora lidera ${G.partida.nombre(h.id)}`, G.datos.HEROES[h.id].color);
     }
 
     habilidad() {
@@ -467,7 +467,7 @@
         if (!this.avisoPesado || this.t - this.avisoPesado > 3) {
           this.avisoPesado = this.t;
           G.audio.efecto('error');
-          G.ui.aviso('Muy pesado. Ixbalanqué sí podría moverlo (⇄).', COL.oro);
+          G.ui.aviso('Muy pesado. {I} sí podría moverlo (' + G.entrada.etiqueta('x') + ').', COL.oro);
         }
         return;
       }
@@ -568,7 +568,7 @@
             G.partida.e.especiales.huesos--;
             G.partida.abrir(o.id);
             G.audio.efecto('rugido');
-            this.decir([{ quien: 'Ixbalanqué', retrato: 'ixbalanque', texto: 'Toma, hermano jaguar. Roe este hueso y déjanos pasar.' }, 'El jaguar toma el hueso y se echa a un lado, tranquilo.']);
+            this.decir([{ quien: '{I}', retrato: 'ixbalanque', texto: 'Toma, hermano jaguar. Roe este hueso y déjanos pasar.' }, 'El jaguar toma el hueso y se echa a un lado, tranquilo.']);
             G.partida.guardar();
             if (d.evento) this.lanzarEvento(d.evento);
           } else {
@@ -1205,14 +1205,14 @@
       // ayuda de botones
       if (this.enControl()) {
         const h = this.heroeLider();
-        const tactil = G.entrada.usaTactil();
+        const et = G.entrada.etiqueta;
         const hab = h.id === 'hunahpu' ? 'Cerbatana' : 'Rugido';
-        const txt = (tactil ? 'B ' : 'X ') + hab + ' · ' + (tactil ? '⇄' : 'C') + ' Cambiar';
+        const txt = et('b') + ' ' + hab + ' · ' + et('x') + ' Cambiar';
         ctx.globalAlpha = 0.75;
         G.fuente.texto(ctx, txt, G.ANCHO / 2, G.ALTO - 12, COL.texto, { alinear: 'centro', sombra: COL.sombra });
         ctx.globalAlpha = 1;
         if (this.verbo) {
-          G.fuente.texto(ctx, (tactil ? 'A ' : 'Z ') + this.verbo, G.ANCHO / 2, G.ALTO - 24, COL.oro, { alinear: 'centro', borde: COL.sombra });
+          G.fuente.texto(ctx, et('a') + ' ' + this.verbo, G.ANCHO / 2, G.ALTO - 24, COL.oro, { alinear: 'centro', borde: COL.sombra });
         }
       }
       this.verbo = null;

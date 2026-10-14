@@ -146,6 +146,7 @@
       if (!esc || G.motor.enTransicion()) return;
       try {
         if (esc instanceof G.EscenaTitulo) return this.titulo(esc);
+        if (esc instanceof G.EscenaNombre) return this.nombres(esc);
         if (esc instanceof G.EscenaComic) { this.soltarTodo(); return this.pulsar('a'); }
         if (esc instanceof G.EscenaCombate) return this.combate(esc);
         if (esc instanceof G.EscenaDerrota) return this.derrota(esc);
@@ -168,6 +169,24 @@
       esc.menu.sel = 1; // Nueva partida
       this.pulsar('a');
       if (!esc.confirmar && esc.fase === 'menu') this.empezo = true;
+    },
+
+    // Pantalla de nombres: el primer gemelo se llama "Kin" (escrito con el teclado
+    // de letras de la pantalla) y el segundo se deja con "Omitir" (nombre por defecto).
+    nombres(esc) {
+      if (esc.terminado) return;
+      if (esc.paso === 0) {
+        const objetivo = 'Kin';
+        if (esc.texto === objetivo) { esc.fila = 3; esc.col = 5; return this.pulsar('a'); }
+        const c = objetivo[esc.texto.length];
+        const filas = esc.filas();
+        const j = filas.findIndex((f) => f.includes(c));
+        if (j < 0) { esc.mayus = !esc.mayus; return; }
+        esc.fila = j; esc.col = filas[j].indexOf(c);
+        return this.pulsar('a');
+      }
+      esc.fila = 3; esc.col = 4; // Omitir
+      this.pulsar('a');
     },
 
     derrota(esc) {

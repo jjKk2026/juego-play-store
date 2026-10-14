@@ -17,7 +17,8 @@
   const esTactil = () => ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
   G.aplicarTactil = function () {
     const o = G.opciones.tactil;
-    const mostrar = o === 'si' || (o === 'auto' && (G.entrada.usaTactil() || esTactil()));
+    // con un mando conectado se esconden los botones de la pantalla
+    const mostrar = o === 'si' || (o === 'auto' && (G.entrada.usaTactil() || (esTactil() && G.entrada.modo() !== 'mando')));
     document.body.classList.toggle('tactil', mostrar);
     setTimeout(() => G.motor.ajustarTamano(), 50);
   };

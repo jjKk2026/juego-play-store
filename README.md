@@ -20,18 +20,31 @@ RPG de aventura en pixel art inspirado en el **Popol Vuh**. Los Gemelos Héroes,
 | **Bestiario** | Dibujo de cada criatura con datos reales y breves sobre ella y la cultura maya. |
 | **Menús** | Título animado, Nueva partida, Continuar, Opciones (volumen, velocidad del texto, modo de batalla…), Bestiario, pausa con guardado y botón de silencio. |
 
+## Nombres de los gemelos
+
+Al empezar una partida nueva, el jugador escribe el nombre de cada gemelo, como en Pokémon:
+
+- con el teclado de letras de la pantalla (cruceta o mando + A),
+- tocando el recuadro del nombre, que abre el teclado del celular o del iPad,
+- o escribiendo directo con el teclado del computador.
+
+Si deja el nombre vacío o elige **Omitir**, se usan **Ren** y **Alex**. El botón **Maya** pone los nombres del Popol Vuh (Hunahpú e Ixbalanqué). Los nombres se guardan con la partida (`G.partida.nombre(id)` en `js/juego/estado.js`) y aparecen en diálogos, combates y menús. Para usarlos en un texto nuevo, se escribe `{H}`, `{I}` o `{GEMELOS}` (por ejemplo: `'{H} encontró una llave'`). Las partidas guardadas antes de esta opción conservan los nombres del Popol Vuh.
+
 ## Controles
 
-| Acción | Teclado | Pantalla táctil |
-|---|---|---|
-| Moverse | Flechas o WASD | Cruceta |
-| Hablar, abrir, confirmar, golpe preciso | Z, Espacio o Enter | A |
-| Cancelar / habilidad del líder (cerbatana o rugido) | X | B |
-| Cambiar de líder | C o Tab | ⇄ |
-| Pausa | Esc o P | ❚❚ |
-| Silenciar | M | 🔊 |
+| Acción | Teclado | Pantalla táctil | Mando (8BitDo, Xbox, PlayStation…) |
+|---|---|---|---|
+| Moverse | Flechas o WASD | Cruceta | Cruceta o palanca izquierda |
+| Hablar, abrir, confirmar, golpe preciso | Z, Espacio o Enter | A | A / Cruz |
+| Cancelar / habilidad del líder (cerbatana o rugido) | X | B | B / Círculo |
+| Cambiar de líder | C o Tab | ⇄ | X / Y / Cuadrado / Triángulo / L1 / R1 |
+| Pausa | Esc o P | botón de pausa | Start o Select |
+| Silenciar | M | 🔊 | — |
 
-También funciona con control de consola (gamepad). En los menús se puede tocar directamente la opción.
+Todo funciona al mismo tiempo: se puede usar el mando y tocar la pantalla en la misma partida. Al usar un mando se esconden los botones de la pantalla y los textos de ayuda muestran los botones del mando. Si el mando lo permite, vibra en los golpes fuertes.
+
+- **Navegador (web e iPad):** se usa la API de mandos del navegador (`js/motor/entrada.js`). También entiende mandos en "modo D-input", que mandan la cruceta como un eje.
+- **APK de Android:** la app recibe los botones del mando directamente de Android y se los pasa al juego (`MainActivity.java` → `G.entrada.mandoNativo`). Para conectar el mando, empareja el control por Bluetooth en los Ajustes del teléfono y luego abre el juego.
 
 ## Cómo está organizado el código
 

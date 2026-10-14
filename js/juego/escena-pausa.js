@@ -168,11 +168,10 @@
         this.iFrag = ((this.iFrag === undefined ? Math.floor(Math.random() * frags.length) : this.iFrag) + 1) % frags.length;
         lineas = frags[this.iFrag].map((t) => Object.assign({ texto: t }, yo));
       } else {
-        const tactil = G.entrada.usaTactil();
         lineas = [
-          Object.assign({ texto: tactil ? 'Muévete con la cruceta. *A* sirve para hablar, abrir y confirmar. *B* para cancelar y usar la habilidad del líder.' : 'Muévete con las flechas. *Z* (o Enter) para hablar, abrir y confirmar. *X* para cancelar y usar la habilidad del líder. *C* cambia de líder.' }, yo),
-          Object.assign({ texto: 'Hunahpú dispara su *cerbatana*: activa cristales y, si el dardo cruza un fuego, enciende braseros. Ixbalanqué *ruge* para asustar enemigos y es el único que empuja bloques con cara de jaguar.' }, yo),
-          Object.assign({ texto: 'En combate, cuando ataques aparecerá un anillo: toca *A* justo cuando se junte con el círculo dorado para un *golpe preciso*.' }, yo),
+          Object.assign({ texto: G.entrada.explicacion() }, yo),
+          Object.assign({ texto: '{H} dispara su *cerbatana*: activa cristales y, si el dardo cruza un fuego, enciende braseros. {I} *ruge* para asustar enemigos y es el único que empuja bloques con cara de jaguar.' }, yo),
+          Object.assign({ texto: 'En combate, cuando ataques aparecerá un anillo: presiona *A* justo cuando se junte con el círculo dorado para un *golpe preciso*.' }, yo),
           Object.assign({ texto: 'Si las barras de tiempo de los dos están llenas, en Técnicas aparecen las *técnicas dobles* (con estrella). Los altares de copal curan y guardan la partida.' }, yo)
         ];
       }
@@ -205,7 +204,7 @@
       this.eligeHeroe = r.opcion.valor;
       this.menuHeroe = new G.ui.Menu(G.partida.heroes().map((h) => {
         const s = G.reglas.stats(h);
-        return { texto: G.datos.HEROES[h.id].nombre, detalle: `${h.vida}/${s.vida}  E ${h.energia}/${s.energia}` };
+        return { texto: G.partida.nombre(h.id), detalle: `${h.vida}/${s.vida}  E ${h.energia}/${s.energia}` };
       }), { x: 140, y: 120, ancho: 200, titulo: '¿A quién?' });
       void E;
     }
@@ -224,7 +223,7 @@
       } else return;
       G.partida.quitar(id);
       G.audio.efecto('curar');
-      G.ui.aviso(`${G.datos.HEROES[h.id].nombre} usó ${o.nombre}`, '#7ef2c8');
+      G.ui.aviso(`${G.partida.nombre(h.id)} usó ${o.nombre}`, '#7ef2c8');
     }
 
     dibujar(ctx) {
@@ -260,7 +259,7 @@
         G.ui.ventana(ctx, x, y, w, 52);
         ctx.drawImage(G.arte.retrato(h.id), x + 6, y + 6, 40, 40);
         const def = G.datos.HEROES[h.id];
-        G.fuente.texto(ctx, def.nombre, x + 52, y + 6, def.color, { sombra: COL.sombra });
+        G.fuente.texto(ctx, G.partida.nombre(h.id), x + 52, y + 6, def.color, { sombra: COL.sombra });
         G.fuente.texto(ctx, 'Nivel ' + h.nivel, x + w - 8, y + 6, COL.oro, { alinear: 'der' });
         G.fuente.texto(ctx, `Vida ${h.vida}/${s.vida}`, x + 52, y + 19, COL.texto);
         G.ui.barra(ctx, x + 52, y + 31, 90, 3, h.vida, s.vida, '#7ef2c8');
@@ -294,7 +293,7 @@
       const def = G.datos.HEROES[h.id];
       const s = G.reglas.stats(h);
       const x = 142, y = 22, w = G.ANCHO - x - 8, alto = 172;
-      G.ui.ventana(ctx, x, y, w, alto, { titulo: def.nombre });
+      G.ui.ventana(ctx, x, y, w, alto, { titulo: G.partida.nombre(h.id) });
       ctx.drawImage(G.arte.personaje(h.id, 0, 0), x + 10, y + 12, 32, 50);
       G.fuente.texto(ctx, def.titulo, x + 50, y + 10, def.color);
       G.fuente.texto(ctx, `Nivel ${h.nivel}   Exp. ${h.xp}/${G.reglas.xpSiguiente(h.nivel)}`, x + 50, y + 22, COL.texto);
