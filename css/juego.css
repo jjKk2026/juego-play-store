@@ -1,0 +1,94 @@
+/* Estilos de la página: pantalla negra, imagen nítida y controles táctiles. */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0; height: 100%; width: 100%;
+  background: #0d0618; color: #f6ecd9; overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  overscroll-behavior: none;
+}
+#app {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#pantalla {
+  position: relative; flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+#lienzo {
+  display: block; image-rendering: pixelated; image-rendering: crisp-edges;
+  background: #000; box-shadow: 0 0 40px rgba(63, 211, 168, 0.12);
+}
+#cargando { position: absolute; color: #9b8fb0; font-size: 14px; }
+
+/* ---------- Botones de esquina ---------- */
+.btn-esquina {
+  position: fixed; top: calc(8px + env(safe-area-inset-top)); z-index: 5;
+  width: 40px; height: 40px; border-radius: 10px;
+  border: 2px solid rgba(232, 182, 76, 0.7); background: rgba(23, 11, 38, 0.6);
+  color: #f6ecd9; font-size: 18px; line-height: 1; padding: 0; cursor: pointer;
+}
+#btn-silencio { right: calc(8px + env(safe-area-inset-right)); }
+#btn-pausa { right: calc(56px + env(safe-area-inset-right)); font-size: 14px; letter-spacing: -2px; }
+.btn-esquina.activo { background: rgba(232, 182, 76, 0.5); }
+
+/* ---------- Controles táctiles ---------- */
+.tactil-solo { display: none; }
+body.tactil .tactil-solo { display: block; }
+#controles {
+  position: fixed; left: 0; right: 0; bottom: 0; height: 0; z-index: 4; pointer-events: none;
+}
+#cruceta, #botones { pointer-events: auto; position: fixed; bottom: calc(14px + env(safe-area-inset-bottom)); }
+#cruceta {
+  left: calc(14px + env(safe-area-inset-left));
+  width: 138px; height: 138px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(36, 18, 58, 0.55) 0%, rgba(36, 18, 58, 0.35) 70%, rgba(36, 18, 58, 0) 72%);
+  touch-action: none;
+}
+#cruceta .flecha {
+  position: absolute; width: 46px; height: 46px; border-radius: 10px;
+  background: rgba(246, 236, 217, 0.18); border: 2px solid rgba(246, 236, 217, 0.35);
+}
+#cruceta .flecha::after {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+  border: 8px solid transparent; transform: translate(-50%, -50%);
+}
+#cruceta .arriba { left: 46px; top: 0; }
+#cruceta .arriba::after { border-bottom-color: #f6ecd9; margin-top: -4px; }
+#cruceta .abajo { left: 46px; bottom: 0; }
+#cruceta .abajo::after { border-top-color: #f6ecd9; margin-top: 4px; }
+#cruceta .izquierda { left: 0; top: 46px; }
+#cruceta .izquierda::after { border-right-color: #f6ecd9; margin-left: -4px; }
+#cruceta .derecha { right: 0; top: 46px; }
+#cruceta .derecha::after { border-left-color: #f6ecd9; margin-left: 4px; }
+#cruceta .centro { position: absolute; left: 46px; top: 46px; width: 46px; height: 46px; background: rgba(246, 236, 217, 0.08); }
+#cruceta[data-dir~="arriba"] .arriba, #cruceta[data-dir~="abajo"] .abajo,
+#cruceta[data-dir~="izquierda"] .izquierda, #cruceta[data-dir~="derecha"] .derecha {
+  background: rgba(232, 182, 76, 0.6);
+}
+#botones { right: calc(14px + env(safe-area-inset-right)); width: 170px; height: 138px; }
+.btn-accion {
+  position: absolute; border-radius: 50%; border: 3px solid rgba(26, 15, 31, 0.6);
+  color: #1a0f1f; font-weight: 800; font-size: 22px; padding: 0; touch-action: none;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45); opacity: 0.85;
+}
+.btn-accion.activo { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45); opacity: 1; }
+.btn-a { width: 72px; height: 72px; right: 0; top: 18px; background: #ffcc4d; }
+.btn-b { width: 60px; height: 60px; right: 80px; top: 66px; background: #3fd3a8; }
+.btn-x { width: 46px; height: 46px; right: 92px; top: 0; background: #b18cff; font-size: 20px; }
+
+/* En celular vertical: la imagen arriba y los controles abajo, sin taparla. */
+@media (orientation: portrait) {
+  body.tactil #pantalla { flex: 0 0 auto; padding-top: 56px; }
+  body.tactil #app::after { content: ''; flex: 1 1 auto; }
+}
+/* En pantallas horizontales bajitas, los controles más chicos y transparentes. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #cruceta { width: 120px; height: 120px; transform-origin: bottom left; opacity: 0.8; }
+  #cruceta .flecha { width: 40px; height: 40px; }
+  #cruceta .arriba, #cruceta .abajo { left: 40px; }
+  #cruceta .izquierda, #cruceta .derecha { top: 40px; }
+  #cruceta .centro { left: 40px; top: 40px; width: 40px; height: 40px; }
+  #botones { opacity: 0.8; transform: scale(0.85); transform-origin: bottom right; }
+}
