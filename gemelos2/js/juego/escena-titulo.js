@@ -119,7 +119,7 @@
     empezar() {
       G.guardado.borrarPartida();
       G.EscenaMapa.vencidos.clear();
-      const e = G.partida.nueva('maya');
+      const e = G.partida.nueva('maya2');
       const m = G.partida.mundo();
       const irAlMapa = () => G.motor.cambiar(new G.EscenaMapa(e.mapa), { dur: 0.6 });
       const historia = () => {
@@ -150,6 +150,8 @@
       ctx.drawImage(paisaje(), 0, 0);
       // gemelos de espaldas mirando el sol
       ctx.drawImage(P.silueta(G.arte.personaje('hunahpu', 3, 0), '#0a0612'), 172, 156, 16, 25);
+      // el hermano poseído, con ojos morados
+      P.brillo(ctx, 198, 168, 16, '#e040ff', 0.25 + Math.sin(t * 2) * 0.1);
       ctx.drawImage(P.silueta(G.arte.personaje('ixbalanque', 3, 0), '#0a0612'), 190, 157, 16, 25);
       // luciérnagas
       for (let i = 0; i < 14; i++) {
@@ -165,10 +167,10 @@
       P.trama(ctx, 0, 0, W, H, 'rgba(0,0,0,0.18)', 4, (i, j) => Math.round((1 - j / H) * 2));
       // título con sombra desfasada (rojo/azul) como en el cómic
       const ty = 18 + Math.round(Math.sin(t * 1.2) * 2);
-      G.fuente.texto(ctx, 'GEMELOS DEL SOL', W / 2 - 2, ty, '#ff2a6d', { alinear: 'centro', escala: 3 });
-      G.fuente.texto(ctx, 'GEMELOS DEL SOL', W / 2 + 2, ty, '#05d9e8', { alinear: 'centro', escala: 3 });
-      G.fuente.texto(ctx, 'GEMELOS DEL SOL', W / 2, ty, '#ffd166', { alinear: 'centro', escala: 3, borde: '#1a0f1f' });
-      G.fuente.texto(ctx, 'La luz de Xibalbá', W / 2, ty + 32, '#7ef2c8', { alinear: 'centro', escala: 1, borde: '#1a0f1f' });
+      G.fuente.texto(ctx, 'GEMELOS DEL SOL 2', W / 2 - 2, ty, '#ff2a6d', { alinear: 'centro', escala: 3 });
+      G.fuente.texto(ctx, 'GEMELOS DEL SOL 2', W / 2 + 2, ty, '#05d9e8', { alinear: 'centro', escala: 3 });
+      G.fuente.texto(ctx, 'GEMELOS DEL SOL 2', W / 2, ty, '#ffd166', { alinear: 'centro', escala: 3, borde: '#1a0f1f' });
+      G.fuente.texto(ctx, 'El Sello de Camazotz', W / 2, ty + 32, '#e040ff', { alinear: 'centro', escala: 1, borde: '#1a0f1f' });
       if (this.fase === 'inicio') {
         if (Math.floor(t * 2) % 2 === 0) {
           G.fuente.texto(ctx, ({ tactil: 'Toca la pantalla para empezar', mando: 'Presiona A o Start', teclado: 'Presiona Z, Enter o toca la pantalla' })[G.entrada.modo()], W / 2, 140, COL.texto, { alinear: 'centro', borde: '#1a0f1f' });
@@ -187,8 +189,8 @@
     constructor() {
       this.t = 0;
       this.lineas = [
-        ['GEMELOS DEL SOL', 2, '#ffd166'], ['La luz de Xibalbá', 1, '#7ef2c8'], ['', 1],
-        ['{GEMELOS} devolvieron la luz al mundo.', 1], ['Según el Popol Vuh, los gemelos subieron', 1], ['al cielo: uno se volvió el sol y el otro la luna.', 1], ['', 1],
+        ['GEMELOS DEL SOL 2', 2, '#ffd166'], ['El Sello de Camazotz', 1, '#e040ff'], ['', 1],
+        ['{GEMELOS} volvieron a estar juntos.', 1], ['Vucub Caquix, Camazotz y Zipacná', 1], ['ahora cuidan la selva como espíritus.', 1], ['', 1],
         ['Inspirado en el Popol Vuh,', 1, '#e8b64c'], ['libro sagrado del pueblo maya k\'iche\'.', 1, '#e8b64c'], ['', 1],
         ['Arte, música y sonidos creados con código.', 1], ['Instrumentos inspirados en flautas, ocarinas,', 1], ['tambores de tronco, sonajas y caracolas.', 1], ['', 1],
         ['Próximas aventuras:', 1, '#ff2a6d'],

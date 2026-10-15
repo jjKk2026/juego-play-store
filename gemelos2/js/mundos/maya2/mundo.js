@@ -1,5 +1,5 @@
 /* =====================================================================
-   MUNDO MAYA: XIBALBÁ (Popol Vuh)
+   MUNDO MAYA: XIBALBÁ (Gemelos del Sol 2: El Sello de Camazotz)
    Aquí se juntan todas las piezas del mundo (mapas, criaturas, historia)
    y se escriben los "eventos": pequeñas escenas que pasan al hablar con
    alguien, al pisar un lugar o al encontrar a un jefe.
@@ -12,7 +12,7 @@
 
 (function () {
   const W = G.mundoMaya;
-  const { TZ, AB, HU, IX, di } = W;
+  const { TZ, AB, HU, IX, IXP, di } = W;
 
   // Para no repetir: un evento que solo pasa la primera vez.
   const unaVez = (bandera, fn) => async (esc, p) => {
@@ -21,15 +21,30 @@
     await fn(esc, p);
   };
 
+  // Combate contra un jefe que se purifica: devuelve true si quedó purificado.
+  async function jefePurificable(esc, p, criatura) {
+    const r = await esc.combate({ grupo: [criatura], modo: 'jefe', musica: 'jefe' });
+    return r === 'victoria';
+  }
+  function darReliquia(p, id) {
+    p.darEspecial(id);
+    G.audio.efecto('cofre');
+    G.ui.aviso(`Reliquia sagrada: ${G.datos.RELIQUIAS[id].nombre} (${p.reliquias()}/3)`, '#e9ff70');
+  }
+
   const eventos = {
     // ------------------------------ SELVA ------------------------------
+    entrarSelva: async (esc, p) => {
+      if (!p.bandera('bienvenida')) return eventos.bienvenida(esc, p);
+      if (p.bandera('vucubVencido') && !p.bandera('duelo')) return eventos.duelo(esc, p);
+    },
     bienvenida: unaVez('bienvenida', async (esc, p) => {
       p.poner('colibri');
       G.audio.efecto('colibri');
       await esc.decir([
-        di(TZ, '¡Aquí estoy! Volaré siempre cerca de ustedes. Si necesitan una pista, búsquenme en el menú de pausa.'),
+        di(TZ, '{H}, no estás solo. Yo, Tz\'unun, volaré contigo. Si necesitas una pista, búscame en el menú de pausa.'),
         di(TZ, G.entrada.explicacion()),
-        di(TZ, 'Primero hablen con su abuela Ixmucané. Está junto a su casa, aquí a la izquierda.')
+        di(TZ, 'Primero habla con la abuela Ixmucané. Está junto a su casa, aquí a la izquierda.')
       ]);
       p.objetivo('abuela');
     }),
@@ -37,15 +52,18 @@
     abuela: async (esc, p) => {
       if (!p.bandera('abuela')) {
         await esc.decir([
-          di(AB, 'Ay, mis niños... desde que el cielo se quebró, el sol ya no sale. La milpa tiene frío y los pájaros casi no cantan.'),
-          di(AB, 'Los Señores de Xibalbá se llevaron la luz a su casa, allá abajo, en el inframundo. Ustedes son valientes, como su padre.'),
-          di(AB, 'El camino empieza en la gran *ceiba*, al norte. Pero en sus raíces se metió *Vucub Caquix*, el ave presumida que dice ser el sol.'),
-          di(AB, 'Tomen: *cacao* para la vida, *cuentas de jade* para la energía, *copal* para escapar y una *pluma de quetzal* por si uno de ustedes cae.')
+          di(AB, 'Ay, mi niño... el Sello de Camazotz le borró los recuerdos a tu hermano. Pero su corazón sigue ahí dentro.'),
+          di(AB, 'Escucha bien: si le haces daño, le haces daño a él. El sello solo se rompe con *luz pura*: purificándolo con tu espíritu o con reliquias sagradas.'),
+          di(AB, 'Los enemigos grandes de Xibalbá también tienen luz atrapada. Véncelos y *purifícalos*: te ayudarán como espíritus.'),
+          di(AB, 'Toma: *cacao* para la vida, *cuentas de jade* para los PE, *copal* para escapar y una *pluma de quetzal*: si caes, te levantará sola.')
         ]);
         p.dar('cacao', 3); p.dar('jade', 2); p.dar('copal', 1); p.dar('pluma', 1);
         G.audio.efecto('cofre');
         G.ui.aviso('Recibiste cacao, jade, copal y una pluma', '#ffd166');
-        await esc.decir([di(AB, 'Si se cansan, descansen en los *altares de copal*. El humo sagrado los cuida y guarda su camino. ¡Vayan con cuidado!')]);
+        await esc.decir([
+          di(AB, 'Vucub Caquix se metió otra vez en las raíces de la gran *ceiba*, al norte. Dicen que guarda una chispa del sol.'),
+          di(AB, 'Si te cansas, descansa en los *altares de copal*. ¡Ve con cuidado!')
+        ]);
         p.poner('abuela');
         p.objetivo('templo');
         p.guardar();
@@ -53,34 +71,52 @@
       }
       p.curarTodo();
       G.audio.efecto('curar');
-      const frase = p.bandera('fin') ? '¡Mis niños! El sol volvió a calentar la milpa. Estoy tan orgullosa...'
-        : p.bandera('vucubVencido') ? 'Dicen que vencieron a Vucub Caquix. Bajen con cuidado a Xibalbá; allá todo es engaño.'
-          : 'Cuídense mucho. Vucub Caquix los espera en las raíces de la ceiba.';
-      await esc.decir([di(AB, frase), 'La abuela les sirve atole calientito. Recuperan toda su vida y energía.']);
+      const frase = p.bandera('fin') ? '¡Mis dos niños juntos otra vez! No hay nada más bonito.'
+        : p.bandera('duelo') ? 'Tu hermano bajó a Xibalbá. Busca las tres reliquias, mi niño.'
+          : 'Vucub Caquix te espera en las raíces de la ceiba.';
+      await esc.decir([di(AB, frase), 'La abuela te sirve atole calientito. Recuperas toda la vida y los PE.']);
     },
 
     llegadaTemplo: unaVez('llegadaTemplo', async (esc) => {
-      await esc.decir([di(TZ, 'Las raíces de la ceiba... Aquí abajo hay puertas, rejas y cristales. Lean las estelas: siempre dan pistas.')]);
+      await esc.decir([di(TZ, 'Las raíces de la ceiba... Hay puertas, rejas y cristales. Lee las estelas: siempre dan pistas.')]);
     }),
 
     jefeVucub: async (esc, p) => {
       await esc.decir([
-        { quien: 'Vucub Caquix', texto: '¿Quién se atreve a entrar en mi árbol? ¡Mírenme bien! Mis ojos son de plata y mis dientes, de piedras preciosas.' },
-        { quien: 'Vucub Caquix', texto: '¡Yo soy el sol! ¡Yo soy la luz! ¿Para qué quieren otro sol, si me tienen a mí?' },
-        di(HU, 'Tu brillo no calienta la milpa ni alumbra el camino. Tú no eres el sol.'),
-        di(IX, 'Y entre tus plumas brilla algo que no es tuyo: ¡una chispa de la luz robada!'),
-        di(TZ, '¡Cuidado! Su punto débil es el *viento*: la *cerbatana* de {H} le hará mucho daño. ¡Y no olviden el golpe preciso!')
+        { quien: 'Vucub Caquix', texto: '¿Tú otra vez? ¿Y solito? ¡Ja! Sin tu hermano no eres nada.' },
+        { quien: 'Vucub Caquix', texto: 'Los Señores me dieron una chispa del sol. ¡Ahora sí soy el sol de verdad!' },
+        di(HU, 'Esa luz no es tuya. Y voy a necesitarla para salvar a mi hermano.'),
+        di(TZ, 'Es débil al *viento*: usa el *Viento cortante*. Si recibes golpes, tu barra de *Límite* se llena. Cuando caiga, ¡*purifícalo*!')
       ]);
-      const r = await esc.combate({ grupo: ['vucubCaquix'], jefe: true, musica: 'jefe' });
-      if (r !== 'victoria') return;
+      if (!(await jefePurificable(esc, p, 'vucubCaquix'))) return;
       p.poner('vucubVencido');
-      p.objetivo('cuevas');
+      p.darEspecial('chispa');
+      p.objetivo('duelo');
       esc.quitarObjeto(esc.buscar((o) => o.tipo === 'jefe'));
       esc.aparecer('Y');
       await esc.comic('vucubDespues');
-      await esc.decir([di(TZ, 'Ese portal nos devuelve a la selva. El camino a Xibalbá baja por el *noreste*, junto a las rocas.')]);
+      await esc.decir([di(TZ, 'En combate, el espíritu se invoca con *Espíritu* cuando el Límite está lleno. Y ese portal nos devuelve a la selva... siento algo raro allá.')]);
       p.guardar();
     },
+
+    // Capítulo 1, final: duelo contra el hermano poseído
+    duelo: unaVez('duelo', async (esc, p) => {
+      G.audio.efecto('camara');
+      G.fx.temblor(3, 0.5);
+      await esc.decir([
+        di(IXP, '...{H}. Ese nombre... me duele la cabeza cuando lo oigo.'),
+        di(HU, '¡Hermano! ¡Soy yo! ¡Vuelve a casa!'),
+        di(IXP, 'Camazotz dice que tú eres mi enemigo. ¡Aléjate!'),
+        di(TZ, '¡No puedes vencerlo sin herirlo! *Resiste 5 turnos* o usa la *Chispa de luz* desde Objeto.')
+      ]);
+      const r = await esc.combate({ grupo: ['ixbalanqueDuelo'], modo: 'duelo', musica: 'jefeFinal', turnosDuelo: 5 });
+      if (r === 'derrota') return;
+      p.poner('duelo');
+      p.objetivo('cuevas');
+      await esc.comic('duelo');
+      await esc.decir([di(TZ, 'El camino a Xibalbá está al *noreste* de la selva, junto a las rocas. ¡Vamos por las reliquias!')]);
+      p.guardar();
+    }),
 
     // ------------------------------ CUEVAS ------------------------------
     llegadaCuevas: unaVez('llegadaCuevas', async (esc, p) => {
@@ -94,87 +130,92 @@
     caminoNegro: unaVez('caminoNegro', async (esc, p) => {
       G.audio.efecto('camara');
       await esc.decir([
-        { quien: 'Camino negro', texto: '"Yo soy el camino de Xibalbá. Síganme."' },
-        di(TZ, '¿Lo oyeron? ¡El camino negro habló, igual que en el Popol Vuh! Crucemos el río hacia el este.')
+        { quien: 'Camino negro', texto: '"Yo soy el camino de Xibalbá. Sígueme."' },
+        di(TZ, '¡El camino negro habló! Crucemos el río hacia el este. Huelo cacao en la sala del norte...')
       ]);
-      p.objetivo('canon');
+      p.objetivo('camazotz');
     }),
+    reliquiaObtenida: async (esc, p) => {
+      const n = p.reliquias();
+      await esc.decir([di(TZ, n >= 3 ? '¡Las *tres reliquias*! Ya podemos abrir la puerta del trono.' : `¡Una reliquia sagrada! Llevamos ${n} de 3.`)]);
+      p.guardar();
+    },
+    jefeCamazotz: async (esc, p) => {
+      await esc.decir([
+        { quien: 'Camazotz', texto: 'Skreee... El hermanito valiente. Tu gemelo ahora sirve a Xibalbá. ¡Y tú serás mi cena!' },
+        di(HU, '¡Quítale el sello a mi hermano!'),
+        { quien: 'Camazotz', texto: 'Solo la luz lo rompe... ¡y aquí abajo no hay luz!' },
+        di(TZ, '¡Es débil al *fuego*! Usa el *Dardo de fuego*. Y si tienes el Límite lleno, invoca a la Guacamaya para curarte.')
+      ]);
+      if (!(await jefePurificable(esc, p, 'camazotz'))) return;
+      p.poner('camazotzVencido');
+      p.objetivo(p.tieneReliquia('cacaoAncestral') ? 'canon' : 'cruce');
+      esc.quitarObjeto(esc.buscar((o) => o.tipo === 'jefe'));
+      await esc.comic('camazotzDespues');
+      darReliquia(p, 'copalPuro');
+      if (!p.tieneReliquia('cacaoAncestral')) await esc.decir([di(TZ, 'Nos falta el *Cacao Ancestral*. Está en un cofre de la sala del noreste de estas cuevas.')]);
+      p.guardar();
+    },
+
+    // ------------------------------ CAÑÓN ------------------------------
     llegadaCanon: unaVez('llegadaCanon', async (esc, p) => {
       await esc.decir([
-        di(TZ, 'El cañón de Meauán. Aquí se esconde *Zipacná*, hijo de Vucub Caquix. Dicen que él hace las montañas.'),
-        di(TZ, 'Este lugar está lleno de fuego y cristales. Lean las estelas.')
+        di(TZ, 'El cañón de Meauán. Aquí vive *Zipacná*, hijo de Vucub Caquix. Guarda el *Jade Sagrado*.'),
+        di(TZ, 'Este lugar está lleno de fuego y cristales. Lee las estelas.')
       ]);
       p.objetivo('canonPistas');
     }),
     jefeZipacna: async (esc, p) => {
       await esc.decir([
-        { quien: 'Zipacná', texto: '¿Ustedes vencieron a mi padre? ¡Yo soy Zipacná! Yo levanto las montañas y las cargo sobre mis hombros.' },
-        di(IX, 'Conocemos tu historia. Una montaña terminó cayendo sobre ti.'),
-        { quien: 'Zipacná', texto: '¡Ja! ¡Esta vez seré yo quien les lance la montaña!' },
-        di(TZ, '¡Es débil al *agua*! La *Ola del río* de {I} y el *Eclipse gemelo* son buenas ideas. Cuidado con su pisotón.')
+        { quien: 'Zipacná', texto: '¿Tú purificaste a mi padre? ¡Ahora anda contento, cantando como pajarito! ¡Qué vergüenza!' },
+        di(HU, 'Ahora es libre. Tú también puedes serlo.'),
+        { quien: 'Zipacná', texto: '¡Ja! ¡Te voy a aplastar con una montaña!' },
+        di(TZ, '¡Es débil al *agua*! Cuidado con su pisotón. Y recuerda *Defender* cuando estés débil: el daño se reduce a la mitad.')
       ]);
-      const r = await esc.combate({ grupo: ['zipacna'], jefe: true, musica: 'jefe' });
-      if (r !== 'victoria') return;
+      if (!(await jefePurificable(esc, p, 'zipacna'))) return;
       p.poner('zipacnaVencido');
-      p.objetivo('pruebas');
+      p.objetivo(p.reliquias() + 1 >= 3 ? 'trono' : 'cruce');
       esc.quitarObjeto(esc.buscar((o) => o.tipo === 'jefe'));
       esc.aparecer('Y');
       await esc.comic('zipacnaDespues');
+      darReliquia(p, 'jadeSagrado');
       p.guardar();
     },
 
     // ------------------------------ PALACIO ------------------------------
     llegadaPalacio: unaVez('llegadaPalacio', async (esc, p) => {
       await esc.comic('palacio');
-      await esc.decir([di(TZ, 'Tres casas, tres sellos: la *Oscura* al oeste, la de los *Murciélagos* al norte y la de los *Jaguares* al este. Hay un altar para descansar.')]);
-      p.objetivo('pruebas');
+      await esc.decir([di(TZ, 'La puerta del norte lleva al trono. Necesita las *tres reliquias*. Hay un altar para descansar.')]);
+      p.objetivo(p.reliquias() >= 3 ? 'trono' : 'cruce');
     }),
-    entradaOscura: unaVez('entradaOscura', async (esc) => {
-      await esc.decir([
-        di(HU, 'No veo nada...'),
-        di(TZ, 'La Casa Oscura. ¿Recuerdan el relato? Los gemelos usaron *luciérnagas* para engañar a los Señores.'),
-        di(TZ, 'Encontremos tres luciérnagas: cada una hará crecer nuestra luz. La puerta del sello está al noreste.')
-      ]);
-    }),
-    avisoOscura: async () => {},
-    entradaMurcielagos: unaVez('entradaMurcielagos', async (esc) => {
-      await esc.decir([
-        di(IX, 'Escucha esos chillidos...'),
-        di(TZ, 'Los murciélagos vuelan de arriba abajo sin parar. Pasen cuando estén lejos... o prepárense para luchar.'),
-        di(TZ, 'Para abrir la última sala hay que despertar *dos cristales* con la cerbatana.')
-      ]);
-    }),
-    avisoMurcielagos: async () => {},
-    entradaJaguares: unaVez('entradaJaguares', async (esc) => {
-      await esc.decir([
-        di(TZ, 'Jaguares hambrientos cuidan los pasos. En el relato, los gemelos les lanzaron *huesos*.'),
-        di(TZ, 'Tomen huesos de las pilas y dénselos a los jaguares (botón A frente a ellos).')
-      ]);
-    }),
-    avisoJaguares: async () => {},
-    selloObtenido: async (esc, p) => {
-      const n = p.especial('sellos');
-      if (n >= 3) {
-        p.objetivo('trono');
-        await esc.decir([di(TZ, '¡Los *tres sellos*! La gran puerta del norte del palacio ya puede abrirse. Los Señores nos esperan.')]);
-      } else {
-        await esc.decir([di(TZ, `¡Un sello! Llevamos ${n} de 3. Volvamos al palacio por la siguiente casa.`)]);
-      }
-      p.guardar();
-    },
     antesTrono: unaVez('antesTrono', async (esc) => {
-      await esc.decir([di(TZ, 'Ahí están... *Hun Camé* y *Vucub Camé*, los señores más poderosos de Xibalbá. Si lo necesitan, descansen en el altar.')]);
+      await esc.decir([di(TZ, 'Ahí está tu hermano... Si lo necesitas, descansa en el altar. Recuerda: *no lo hieras*.')]);
     }),
+
+    // FINAL: fase 1 (romper el sello) y fase 2 (Avatar de la Noche Eterna)
     jefeFinal: async (esc, p) => {
+      if (!p.bandera('selloRoto')) {
+        await esc.decir([
+          di(IXP, '{H}... vete. Los Señores me ordenan pelear contigo.'),
+          di(HU, 'No voy a pelear contra ti. Voy a pelear *por* ti.'),
+          di(TZ, '¡Mira las dos barras! Si su *Vida* llega a 0, lo pierdes. Baja su *Sello* a 0 con *Espíritu → Purificar* (media barra de Límite) o con la *Reliquia de Luz* (Objeto).'),
+          di(TZ, 'Para llenar el Límite tienes que recibir golpes... *Defiende* para aguantar.')
+        ]);
+        const r = await esc.combate({ grupo: ['ixbalanquePoseido'], modo: 'sello', musica: 'jefeFinal' });
+        if (r !== 'selloRoto') return;
+        p.poner('selloRoto');
+        p.unirAlEquipo('ixbalanque');
+        p.curarTodo();
+        p.guardar();
+        await esc.comic('liberado');
+      }
+      await esc.comic('avatar');
       await esc.decir([
-        { quien: 'Hun Camé', texto: 'Así que los hijos de Hun Hunahpú llegaron hasta aquí. Pasaron nuestras casas... con trucos.' },
-        { quien: 'Vucub Camé', texto: 'Pero la luz del sol se queda en Xibalbá. Aquí abajo, nosotros decidimos.' },
-        di(HU, 'La luz es de todos: de la milpa, de los ríos, de la gente de maíz.'),
-        di(IX, '¡Venimos a llevarla de vuelta!'),
-        di(TZ, 'Hun Camé es débil al *fuego* y Vucub Camé al *agua*. ¡Usen las técnicas dobles!')
+        di(IX, '¡Ahora somos dos! Cuando los dos tengamos el Límite lleno, podemos usar la *Técnica Gemela*.'),
+        di(TZ, '¡Es débil al *fuego* y al *agua*! ¡Por la luz!')
       ]);
-      const r = await esc.combate({ grupo: ['hunCame', 'vucubCame'], jefe: true, musica: 'jefeFinal' });
-      if (r !== 'victoria') return;
+      const r2 = await esc.combate({ grupo: ['avatar'], modo: 'final', heroes: ['hunahpu', 'ixbalanque'], musica: 'jefeFinal' });
+      if (r2 !== 'victoria') return;
       p.poner('fin');
       p.objetivo('fin');
       p.curarTodo();
@@ -190,10 +231,11 @@
   }
 
   G.mundos.registrar({
-    id: 'maya',
+    id: 'maya2',
     nombre: 'Xibalbá',
     cultura: 'Maya (k\'iche\')',
     heroes: ['hunahpu', 'ixbalanque'],
+    equipoInicial: ['hunahpu'],
     inicio: { mapa: 'selva', x: 15, y: 24, dir: 1, escena: 'intro', objetivo: 'abuela', objetos: {} },
     zonas: {
       selva: { nombre: 'Selva de Ceiba', musica: 'selva' },

@@ -177,7 +177,7 @@
       leyenda: {
         S: { tipo: 'salida', a: 'selva', x: 41, y: 8, dir: 1, aspecto: 'escalera', baja: false },
         X: { tipo: 'salida', a: 'canon', x: 16, y: 36, dir: 3, aspecto: 'escalera', requiere: 'camazotzVencido', mensaje: ['Una sombra enorme de murciélago cubre la escalera.'] },
-        V: { tipo: 'jefe', criatura: 'camazotz', evento: 'jefeCamazotz', bandera: 'camazotzVencido', tam: 2, radio: 40, aura: '#b18cff' },
+        V: { tipo: 'jefe', criatura: 'camazotz', evento: 'jefeCamazotz', bandera: 'camazotzVencido', tam: 1, radio: 28, aura: '#b18cff', escalaMapa: 0.6 },
         K: { tipo: 'camino', color: '#c4302b', piso: ':' },
         W: { tipo: 'camino', color: '#efe6d6', piso: ':' },
         Y: { tipo: 'camino', color: '#ffd166', piso: ':' },
@@ -280,7 +280,7 @@
         '################Q###############',
         '################.###############',
         '################W###############',
-        '###......:......:............###',
+        '###.............:............###',
         '###.F...........:..........F.###',
         '###..T...T.g.T..:T...T...T...###',
         '###.............:............###',
@@ -310,7 +310,7 @@
         f: { tipo: 'estela', dialogo: 'estelaJade' },
         g: { tipo: 'estela', dialogo: 'estelaCopal' },
         k: { tipo: 'enemigo', grupo: ['esqueletoNoble'] },
-        l: { tipo: 'enemigo', grupo: ['esqueletoNoble', 'buhoTucur'] }
+        l: { tipo: 'enemigo', grupo: ['esqueletoNoble', 'buhoObsidiana'] }
       }
     },
     // ------------------------------------------------------------------

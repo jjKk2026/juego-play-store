@@ -120,7 +120,7 @@
         if (r && r.tipo === 'cancelar') this.vista = 'menu';
         else if (r) this.hablarColibri(r.opcion.valor);
       } else {
-        if (this.vista === 'estado' && (E.presionado('izquierda') || E.presionado('derecha'))) { this.heroeSel = 1 - this.heroeSel; G.audio.efecto('cursor'); }
+        if (this.vista === 'estado' && (E.presionado('izquierda') || E.presionado('derecha'))) { this.heroeSel = (this.heroeSel + 1) % G.partida.equipo().length; G.audio.efecto('cursor'); }
         if (E.presionado('b') || E.presionado('a') || E.presionado('pausa') || E.consumirToque()) { G.audio.efecto('cancelar'); this.vista = 'menu'; }
       }
     }
@@ -170,9 +170,11 @@
       } else {
         lineas = [
           Object.assign({ texto: G.entrada.explicacion() }, yo),
-          Object.assign({ texto: '{H} dispara su *cerbatana*: activa cristales y, si el dardo cruza un fuego, enciende braseros. {I} *ruge* para asustar enemigos y es el único que empuja bloques con cara de jaguar.' }, yo),
-          Object.assign({ texto: 'En combate, cuando ataques aparecerá un anillo: presiona *A* justo cuando se junte con el círculo dorado para un *golpe preciso*.' }, yo),
-          Object.assign({ texto: 'Si las barras de tiempo de los dos están llenas, en Técnicas aparecen las *técnicas dobles* (con estrella). Los altares de copal curan y guardan la partida.' }, yo)
+          Object.assign({ texto: '{H} dispara su *cerbatana*: activa cristales y, si el dardo cruza un fuego, enciende braseros. Los bloques de piedra se empujan caminando contra ellos.' }, yo),
+          Object.assign({ texto: 'En combate tienes 5 comandos: *Atacar*, *Magia* (gasta PE), *Espíritu* (usa la barra de Límite), *Objeto* y *Defender* (recibes la mitad del daño).' }, yo),
+          Object.assign({ texto: 'El *Límite* sube 15% cuando te golpean y 5% cuando atacas. Lleno, sirve para tu técnica especial o para invocar a un espíritu aliado.' }, yo),
+          Object.assign({ texto: 'Cuando un jefe cae, queda lleno de corrupción: usa *Espíritu → Purificar* (gratis) para liberarlo y se volverá tu espíritu aliado.' }, yo),
+          Object.assign({ texto: 'Al atacar aparece un anillo: presiona *A* justo cuando se junte con el círculo dorado para un *golpe preciso*. Los altares de copal curan y guardan la partida.' }, yo)
         ];
       }
       this.dialogo = new G.ui.Dialogo(lineas, () => {});
@@ -183,7 +185,7 @@
       this.menuObj = new G.ui.Menu(ids.map((id) => {
         const o = G.datos.OBJETOS[id];
         return { texto: o.nombre, valor: id, detalle: 'x' + G.partida.cuantos(id), deshabilitado: !G.partida.cuantos(id) || o.soloCombate, desc: o.desc };
-      }), { x: 140, y: 22, ancho: 150, titulo: 'Objetos' });
+      }).filter((_, i) => !G.datos.OBJETOS[ids[i]].clave), { x: 140, y: 22, ancho: 150, titulo: 'Objetos' });
       this.vista = 'objetos';
       this.eligeHeroe = null;
     }
@@ -193,7 +195,7 @@
         const r = this.menuHeroe.actualizar(dt);
         if (!r) return;
         if (r.tipo === 'cancelar') { this.eligeHeroe = null; return; }
-        this.usarObjeto(this.eligeHeroe, G.partida.heroes()[r.indice]);
+        this.usarObjeto(this.eligeHeroe, G.partida.equipo()[r.indice]);
         this.eligeHeroe = null;
         this.abrirObjetos();
         return;
@@ -202,9 +204,9 @@
       if (!r) return;
       if (r.tipo === 'cancelar') { this.vista = 'menu'; return; }
       this.eligeHeroe = r.opcion.valor;
-      this.menuHeroe = new G.ui.Menu(G.partida.heroes().map((h) => {
+      this.menuHeroe = new G.ui.Menu(G.partida.equipo().map((h) => {
         const s = G.reglas.stats(h);
-        return { texto: G.partida.nombre(h.id), detalle: `${h.vida}/${s.vida}  E ${h.energia}/${s.energia}` };
+        return { texto: G.partida.nombre(h.id), detalle: `${h.vida}/${s.vida}  PE ${h.energia}/${s.energia}` };
       }), { x: 140, y: 120, ancho: 200, titulo: '¿A quién?' });
       void E;
     }
@@ -234,7 +236,7 @@
       G.ui.ventana(ctx, 8, 150, 126, 44);
       G.fuente.texto(ctx, this.mapa.def.nombre, 14, 156, COL.oro);
       G.fuente.texto(ctx, `Tiempo: ${hrs}:${String(min % 60).padStart(2, '0')}`, 14, 168, COL.texto);
-      G.fuente.texto(ctx, `Sellos: ${G.partida.especial('sellos')}/3`, 14, 180, COL.tenue);
+      G.fuente.texto(ctx, `Reliquias: ${G.partida.reliquias()}/3`, 14, 180, COL.tenue);
       this.menu.dibujar(ctx);
       if (this.vista === 'menu') this.dibujarResumen(ctx);
       else if (this.vista === 'estado') this.dibujarEstado(ctx);
@@ -253,7 +255,8 @@
     }
 
     dibujarResumen(ctx) {
-      G.partida.heroes().forEach((h, i) => {
+      const equipo = G.partida.equipo();
+      equipo.forEach((h, i) => {
         const s = G.reglas.stats(h);
         const x = 142, y = 22 + i * 58, w = G.ANCHO - x - 8;
         G.ui.ventana(ctx, x, y, w, 52);
@@ -263,22 +266,33 @@
         G.fuente.texto(ctx, 'Nivel ' + h.nivel, x + w - 8, y + 6, COL.oro, { alinear: 'der' });
         G.fuente.texto(ctx, `Vida ${h.vida}/${s.vida}`, x + 52, y + 19, COL.texto);
         G.ui.barra(ctx, x + 52, y + 31, 90, 3, h.vida, s.vida, '#7ef2c8');
-        G.fuente.texto(ctx, `Energía ${h.energia}/${s.energia}`, x + 150, y + 19, '#4cc9f0');
+        G.fuente.texto(ctx, `PE ${h.energia}/${s.energia}`, x + 150, y + 19, '#4cc9f0');
         G.ui.barra(ctx, x + 150, y + 31, 70, 3, h.energia, s.energia, '#4cc9f0');
         G.fuente.texto(ctx, `Exp. para subir: ${G.reglas.xpSiguiente(h.nivel) - h.xp}`, x + 52, y + 38, COL.tenue);
       });
+      // espíritus aliados (si viaja solo hay sitio para la lista)
+      if (equipo.length === 1) {
+        const x = 142, y = 80, w = G.ANCHO - x - 8;
+        G.ui.ventana(ctx, x, y, w, 56, { titulo: 'Espíritus aliados' });
+        const ids = Object.keys(G.datos.ESPIRITUS);
+        ids.forEach((id, j) => {
+          const esp = G.datos.ESPIRITUS[id], tiene = G.partida.espiritus().includes(id);
+          G.fuente.texto(ctx, tiene ? esp.nombre : '???', x + 10, y + 10 + j * 13, tiene ? esp.color : COL.tenue);
+          if (tiene) G.fuente.texto(ctx, esp.invocacion, x + w - 8, y + 10 + j * 13, COL.tenue, { alinear: 'der' });
+        });
+      }
       // objetos especiales
       const x = 142, y = 140, w = G.ANCHO - x - 8;
       G.ui.ventana(ctx, x, y, w, 54, { titulo: 'Bolsa' });
       let i = 0;
-      Object.keys(G.datos.OBJETOS).forEach((id) => {
+      Object.keys(G.datos.OBJETOS).filter((id) => !G.datos.OBJETOS[id].clave).forEach((id) => {
         const xx = x + 8 + (i % 4) * 56, yy = y + 10 + Math.floor(i / 4) * 16;
         ctx.drawImage(G.arte.icono(G.datos.OBJETOS[id].icono), xx, yy);
         G.fuente.texto(ctx, 'x' + G.partida.cuantos(id), xx + 14, yy + 2, COL.texto);
         i++;
       });
-      const zona = this.mapa.def.zona;
-      const extras = [['llave', G.partida.llaves(zona)], ['hueso', G.partida.especial('huesos')], ['luciernaga', G.partida.especial('luciernagas')], ['sello', G.partida.especial('sellos')]];
+      const R = G.datos.RELIQUIAS;
+      const extras = [['luciernaga', G.partida.especial('chispa')]].concat(Object.keys(R).map((id) => [R[id].icono, G.partida.especial(id)]));
       extras.forEach(([ic, n], j) => {
         const xx = x + 8 + j * 56, yy = y + 30;
         ctx.globalAlpha = n ? 1 : 0.35;
@@ -289,7 +303,8 @@
     }
 
     dibujarEstado(ctx) {
-      const h = G.partida.heroes()[this.heroeSel];
+      const equipo = G.partida.equipo();
+      const h = equipo[this.heroeSel % equipo.length];
       const def = G.datos.HEROES[h.id];
       const s = G.reglas.stats(h);
       const x = 142, y = 22, w = G.ANCHO - x - 8, alto = 172;
@@ -302,19 +317,17 @@
         G.fuente.texto(ctx, k, x + 50 + (i % 2) * 90, y + 36 + Math.floor(i / 2) * 11, COL.tenue);
         G.fuente.texto(ctx, String(v), x + 130 + (i % 2) * 90, y + 36 + Math.floor(i / 2) * 11, COL.texto, { alinear: 'der' });
       });
-      G.fuente.texto(ctx, 'Técnicas:', x + 10, y + 74, COL.oro);
-      def.tecnicas.forEach(([id, n], i) => {
-        const t = G.datos.TECNICAS[id];
+      G.fuente.texto(ctx, 'Magias (PE):', x + 10, y + 74, COL.oro);
+      def.magias.forEach(([id, n], i) => {
+        const t = G.datos.MAGIAS[id];
         const sabe = h.nivel >= n;
-        G.fuente.texto(ctx, sabe ? `${t.nombre} (${t.costo} E)` : `??? (nivel ${n})`, x + 14 + (i % 2) * 110, y + 86 + Math.floor(i / 2) * 11, sabe ? COL.texto : COL.tenue);
+        G.fuente.texto(ctx, sabe ? `${t.nombre} (${t.costo})` : `??? (nivel ${n})`, x + 14 + (i % 2) * 110, y + 86 + Math.floor(i / 2) * 11, sabe ? COL.texto : COL.tenue);
       });
-      G.fuente.texto(ctx, 'Técnicas dobles:', x + 10, y + 122, COL.oro);
-      const disp = G.reglas.doblesDisponibles(G.partida.heroes());
-      Object.keys(G.datos.DOBLES).forEach((id, i) => {
-        const t = G.datos.DOBLES[id];
-        G.fuente.texto(ctx, disp.includes(id) ? '★ ' + t.nombre : '★ ???', x + 14 + (i % 2) * 110, y + 134 + Math.floor(i / 2) * 11, disp.includes(id) ? '#ffd166' : COL.tenue);
-      });
-      G.fuente.texto(ctx, '< > cambiar de gemelo', x + w - 8, y + alto - 12, COL.tenue, { alinear: 'der' });
+      const lim = G.datos.LIMITES[def.limite];
+      G.fuente.texto(ctx, 'Límite:', x + 10, y + 122, COL.oro);
+      G.fuente.texto(ctx, lim.nombre, x + 60, y + 122, '#7ef2c8');
+      G.fuente.texto(ctx, `Espíritus: ${G.partida.espiritus().length}/3`, x + 10, y + 136, '#b18cff');
+      if (equipo.length > 1) G.fuente.texto(ctx, '< > cambiar de gemelo', x + w - 8, y + alto - 12, COL.tenue, { alinear: 'der' });
     }
 
     dibujarMapa(ctx) {
@@ -385,8 +398,14 @@
       P.trama(ctx, 0, 0, G.ANCHO, G.ALTO, '#1d1330', 4, (i, j) => Math.round(2 * j / G.ALTO));
       const a = Math.min(1, this.t / 1.2);
       ctx.globalAlpha = a;
-      G.fuente.texto(ctx, 'Los gemelos han caído', G.ANCHO / 2, 40, '#ff5d73', { alinear: 'centro', escala: 2, borde: '#1a0f1f' });
-      const lineas = G.fuente.envolver('"No se rindan. En el Popol Vuh, los gemelos también murieron en Xibalbá... y volvieron a nacer en el río, más fuertes que antes." —Tz\'unun', 300);
+      const e = G.partida.e || {};
+      const heriste = e.motivoDerrota === 'heriste';
+      const titulo = heriste ? '¡No, hermano!' : (G.partida.hay() && G.partida.equipo().length === 1 ? G.partida.nombre('hunahpu') + ' ha caído' : 'Los gemelos han caído');
+      G.fuente.texto(ctx, titulo, G.ANCHO / 2, 40, '#ff5d73', { alinear: 'centro', escala: 2, borde: '#1a0f1f' });
+      const texto = heriste
+        ? '"Le hiciste demasiado daño a tu hermano. Recuerda: no lo hieras. Baja su Sello con Espíritu → Purificar o con la Reliquia de Luz." —Tz\'unun'
+        : '"No te rindas. En el Popol Vuh, los gemelos también murieron en Xibalbá... y volvieron a nacer en el río, más fuertes que antes." —Tz\'unun';
+      const lineas = G.fuente.envolver(texto, 300);
       lineas.forEach((l, i) => G.fuente.texto(ctx, l, G.ANCHO / 2, 80 + i * 12, COL.texto, { alinear: 'centro' }));
       const c = G.arte.colibri(Math.floor(this.t * 10));
       P.brillo(ctx, G.ANCHO / 2, 128, 20, '#3fd3a8', 0.4);

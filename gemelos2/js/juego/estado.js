@@ -16,7 +16,7 @@
     hay: () => !!e,
 
     nueva(mundoId) {
-      const m = G.mundos.obtener(mundoId || 'maya');
+      const m = G.mundos.obtener(mundoId || 'maya2');
       e = {
         version: 1,
         mundo: m.id,

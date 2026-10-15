@@ -226,7 +226,7 @@
   // ------------------------- ESCENA -------------------------
   class EscenaComic {
     constructor(id, alTerminar) {
-      const m = G.partida.hay() ? G.partida.mundo() : G.mundos.obtener('maya');
+      const m = G.partida.hay() ? G.partida.mundo() : G.mundos.obtener('maya2');
       this.def = (m.historia && m.historia[id]) || { paginas: [] };
       this.alTerminar = alTerminar;
       this.pagina = 0;

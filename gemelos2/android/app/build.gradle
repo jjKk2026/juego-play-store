@@ -11,7 +11,7 @@ android {
     compileSdk 34
 
     defaultConfig {
-        applicationId 'co.gemelosdelsol.juego'
+        applicationId 'co.gemelosdelsol.juego2'
         minSdk 24
         targetSdk 34
         versionCode numero

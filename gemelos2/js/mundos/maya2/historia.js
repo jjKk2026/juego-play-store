@@ -1,5 +1,5 @@
 /* =====================================================================
-   HISTORIA DEL MUNDO MAYA
+   HISTORIA DEL MUNDO MAYA — Gemelos del Sol 2: El Sello de Camazotz
    - Escenas en viñetas (cómic).
    - Diálogos de personajes, aluxes y estelas.
    - Pistas del colibrí Tz'unun según lo que toca hacer.
@@ -16,8 +16,12 @@
   const ALUX = { quien: 'Alux', retrato: 'alux' };
   const di = (q, texto) => Object.assign({ texto }, q);
 
+  const IXP = { quien: '{I} (poseído)', retrato: 'ixbalanque' };
+  const ESP = (nombre) => ({ quien: nombre, retrato: 'colibri' });
+
   // ------------------------------ VIÑETAS ------------------------------
   const historia = {
+    // PRÓLOGO: el Sello de Camazotz
     intro: {
       musica: 'titulo',
       paginas: [
@@ -27,8 +31,8 @@
             fondo: 'cielo',
             actores: [{ id: 'hunahpu', x: 0.38, y: 0.95, esc: 4, dir: 2 }, { id: 'ixbalanque', x: 0.62, y: 0.95, esc: 4, dir: 1 }],
             textos: [
-              { tipo: 'caja', texto: 'Hace mucho tiempo, cuando el mundo aún era joven...' },
-              { tipo: 'caja', texto: 'Los gemelos *{GEMELOS}* vivían con su abuela, al borde de la selva.' }
+              { tipo: 'caja', texto: 'Después de devolver el sol al cielo, los gemelos *{GEMELOS}* vivían en paz con su abuela.' },
+              { tipo: 'caja', texto: 'Pero en Xibalbá, alguien no había olvidado su derrota...' }
             ]
           }]
         },
@@ -36,14 +40,14 @@
           disposicion: '2h',
           vinetas: [
             {
-              fondo: 'cielo',
+              fondo: 'selva',
               actores: [{ id: 'hunahpu', x: 0.3, y: 0.92, esc: 3, dir: 2, cuadro: 1 }, { id: 'ixbalanque', x: 0.72, y: 0.92, esc: 3, dir: 1 }],
-              textos: [{ tipo: 'globo', texto: '¡Atrapa la pelota, hermano!', de: 0 }, { tipo: 'globo', texto: '¡Esta vez no se me escapa!', de: 1, dy: 40 }]
+              textos: [{ tipo: 'globo', texto: '¡Hoy te gano a la pelota, hermano!', de: 0 }, { tipo: 'globo', texto: '¡Eso dijiste ayer!', de: 1, dy: 40 }]
             },
             {
-              fondo: 'cieloOscuro', efectos: ['temblor', 'rgb', 'lineas'], sonido: 'golpeFuerte', ono: '¡KRAK!', onoX: 0.5, onoY: 0.35,
-              actores: [{ id: 'ixbalanque', x: 0.5, y: 0.98, esc: 3, dir: 3 }],
-              textos: [{ tipo: 'caja', texto: 'De pronto, el cielo se quebró.', abajo: false }]
+              fondo: 'cieloOscuro', efectos: ['temblor', 'rgb', 'lineas'], sonido: 'golpeFuerte', ono: '¡SKREEE!', onoX: 0.5, onoY: 0.3,
+              actores: [{ id: 'camazotz', x: 0.5, y: 0.95, esc: 1.5, brillo: '#7b2cbf' }],
+              textos: [{ tipo: 'caja', texto: 'Del cielo bajó *Camazotz*, el murciélago de la muerte.', abajo: true }]
             }
           ]
         },
@@ -51,22 +55,21 @@
           disposicion: '3',
           vinetas: [
             {
-              fondo: 'cieloOscuro', efectos: ['rgb'], sonido: 'camara',
-              actores: [{ id: 'hunCame', x: 0.3, y: 1.0, esc: 1.25, brillo: '#7b2cbf' }, { id: 'vucubCame', x: 0.7, y: 1.0, esc: 1.25, brillo: '#ff2a6d' }],
+              fondo: 'rojo', efectos: ['rgb'], sonido: 'camara',
+              actores: [{ id: 'camazotz', x: 0.3, y: 1.0, esc: 1.2 }, { id: 'ixbalanque', x: 0.75, y: 0.98, esc: 3, dir: 1 }],
               textos: [
-                { tipo: 'caja', texto: 'Desde *Xibalbá*, el inframundo, subieron los Señores Hun Camé y Vucub Camé.' },
-                { tipo: 'globo', texto: 'La luz del sol ahora es nuestra. Que el mundo de arriba duerma en la sombra.', de: 0, ancho: 190, dx: 70, dy: 30 }
+                { tipo: 'globo', texto: 'Los Señores de Xibalbá te mandan un regalo: ¡el *Sello Oscuro*!', de: 0, ancho: 180, dx: 60, dy: 20 }
               ]
             },
             {
-              fondo: 'selvaNoche',
-              actores: [{ id: 'ixbalanque', x: 0.5, y: 0.98, esc: 3, dir: 0 }],
-              textos: [{ tipo: 'globo', texto: '¡Se están llevando la luz!', de: 0 }]
+              fondo: 'cieloOscuro', efectos: ['temblor'],
+              actores: [{ id: 'ixbalanquePoseido', x: 0.5, y: 0.98, esc: 3, brillo: '#e040ff' }],
+              textos: [{ tipo: 'globo', texto: '¿Quién... eres tú?', de: 0 }]
             },
             {
               fondo: 'selvaNoche', efectos: ['lineas'],
               actores: [{ id: 'hunahpu', x: 0.5, y: 0.98, esc: 3, dir: 0 }],
-              textos: [{ tipo: 'grito', texto: '¡Devuélvanla!', de: 0 }]
+              textos: [{ tipo: 'grito', texto: '¡HERMANO!', de: 0 }]
             }
           ]
         },
@@ -74,16 +77,16 @@
           disposicion: '2v',
           vinetas: [
             {
-              fondo: 'casa',
-              actores: [{ id: 'abuela', x: 0.22, y: 0.98, esc: 2, dir: 2 }, { id: 'hunahpu', x: 0.62, y: 0.98, esc: 2, dir: 1 }, { id: 'ixbalanque', x: 0.78, y: 0.98, esc: 2, dir: 1 }],
-              textos: [{ tipo: 'globo', texto: 'Sin sol, la milpa no crecerá y la selva se apagará, hijos míos...', de: 0, ancho: 170, dx: 60 }]
+              fondo: 'cieloOscuro',
+              actores: [{ id: 'camazotz', x: 0.35, y: 0.95, esc: 1 }, { id: 'ixbalanquePoseido', x: 0.7, y: 0.95, esc: 2 }],
+              textos: [{ tipo: 'caja', texto: 'Con los ojos morados y sin recuerdos, {I} se fue volando con Camazotz hacia el inframundo.' }]
             },
             {
-              fondo: 'selvaNoche',
-              actores: [{ id: 'colibri', x: 0.5, y: 0.62, esc: 4, dir: 2, brillo: '#3fd3a8' }, { id: 'hunahpu', x: 0.18, y: 0.98, esc: 2, dir: 2 }, { id: 'ixbalanque', x: 0.84, y: 0.98, esc: 2, dir: 1 }],
+              fondo: 'casa',
+              actores: [{ id: 'abuela', x: 0.22, y: 0.98, esc: 2, dir: 2 }, { id: 'hunahpu', x: 0.62, y: 0.98, esc: 2, dir: 1 }, { id: 'colibri', x: 0.85, y: 0.55, esc: 3, dir: 1, brillo: '#3fd3a8' }],
               textos: [
-                { tipo: 'globo', texto: "Yo soy Tz'unun, colibrí de luz. Los guiaré hasta Xibalbá.", de: 0, ancho: 170 },
-                { tipo: 'caja', texto: 'Así comenzó el viaje de los Gemelos del Sol.', abajo: true }
+                { tipo: 'globo', texto: 'Un sello así solo se rompe con *luz pura*, mi niño. No le hagas daño a tu hermano...', de: 0, ancho: 180, dx: 60 },
+                { tipo: 'caja', texto: 'Así comenzó el viaje de {H}, solo... pero no por mucho tiempo.', abajo: true }
               ]
             }
           ]
@@ -97,16 +100,38 @@
         disposicion: '2h',
         vinetas: [
           {
-            fondo: 'ceiba', efectos: ['lineas', 'rgb'], ono: '¡FIUU!', onoX: 0.5, onoY: 0.2,
-            actores: [{ id: 'vucubCaquix', x: 0.5, y: 0.95, esc: 2 }],
-            textos: [{ tipo: 'caja', texto: 'Igual que en el Popol Vuh, la cerbatana venció a Vucub Caquix. Su falso brillo se apagó.' }]
+            fondo: 'ceiba', efectos: ['lineas'], ono: '¡LUZ!', onoX: 0.5, onoY: 0.2,
+            actores: [{ id: 'vucubCaquix', x: 0.5, y: 0.95, esc: 1.6, brillo: '#ffd166' }],
+            textos: [{ tipo: 'caja', texto: 'La oscuridad salió de Vucub Caquix. Su orgullo se volvió un brillo tibio y amable.' }]
           },
           {
-            fondo: 'selva',
-            actores: [{ id: 'hunahpu', x: 0.3, y: 0.95, esc: 3, dir: 2 }, { id: 'colibri', x: 0.7, y: 0.55, esc: 3, dir: 1, brillo: '#ffd166' }],
+            fondo: 'oro',
+            actores: [{ id: 'hunahpu', x: 0.3, y: 0.95, esc: 3, dir: 2 }, { id: 'colibri', x: 0.72, y: 0.55, esc: 3, dir: 1, brillo: '#ffd166' }],
             textos: [
-              { tipo: 'globo', texto: 'Entre sus plumas había una chispa del sol robado. ¡La primera!', de: 1, ancho: 150 },
-              { tipo: 'caja', texto: 'El camino a Xibalbá está abierto, al noreste de la selva.', abajo: true }
+              { tipo: 'globo', texto: 'Ahora es tu espíritu aliado. ¡Y te dejó una *chispa de luz*!', de: 1, ancho: 150 },
+              { tipo: 'caja', texto: 'La chispa sirve para hacer retroceder a la sombra.', abajo: true }
+            ]
+          }
+        ]
+      }]
+    },
+
+    duelo: {
+      musica: 'oscura',
+      paginas: [{
+        disposicion: '2h',
+        vinetas: [
+          {
+            fondo: 'selvaNoche', efectos: ['rgb'],
+            actores: [{ id: 'ixbalanquePoseido', x: 0.5, y: 0.98, esc: 3, brillo: '#e040ff' }],
+            textos: [{ tipo: 'globo', texto: 'Mis... recuerdos... duelen. ¡Me voy a Xibalbá!', de: 0, ancho: 150 }]
+          },
+          {
+            fondo: 'selvaNoche',
+            actores: [{ id: 'hunahpu', x: 0.3, y: 0.98, esc: 3, dir: 2 }, { id: 'colibri', x: 0.72, y: 0.55, esc: 3, dir: 1, brillo: '#3fd3a8' }],
+            textos: [
+              { tipo: 'globo', texto: 'La chispa no basta. Necesitamos las *tres reliquias sagradas*: Cacao Ancestral, Copal Puro y Jade Sagrado.', de: 1, ancho: 170 },
+              { tipo: 'caja', texto: 'Están escondidas en las cuevas de Xibalbá.', abajo: true }
             ]
           }
         ]
@@ -119,12 +144,31 @@
         disposicion: '1',
         vinetas: [{
           fondo: 'xibalba', efectos: ['rgb'],
-          actores: [{ id: 'hunahpu', x: 0.4, y: 0.95, esc: 3, dir: 3 }, { id: 'ixbalanque', x: 0.58, y: 0.95, esc: 3, dir: 3 }, { id: 'colibri', x: 0.75, y: 0.5, esc: 3, brillo: '#05d9e8' }],
+          actores: [{ id: 'hunahpu', x: 0.42, y: 0.95, esc: 3, dir: 3 }, { id: 'colibri', x: 0.68, y: 0.5, esc: 3, brillo: '#05d9e8' }],
           textos: [
-            { tipo: 'caja', texto: 'Bajaron por escalones muy empinados, como cuenta el Popol Vuh, hasta las *Cuevas de Xibalbá*.' },
-            { tipo: 'globo', texto: 'Aquí la luz viene de los cristales... y de mí. ¡No se separen!', de: 2, ancho: 140 }
+            { tipo: 'caja', texto: 'Capítulo 2: *las Cuevas de Xibalbá*. Escalones empinados, ríos oscuros y cristales que brillan.' },
+            { tipo: 'globo', texto: 'Camazotz vive aquí abajo. Fue él quien puso el sello. ¡Ten cuidado!', de: 1, ancho: 140 }
           ]
         }]
+      }]
+    },
+
+    camazotzDespues: {
+      musica: 'final',
+      paginas: [{
+        disposicion: '2h',
+        vinetas: [
+          {
+            fondo: 'xibalba', efectos: ['lineas'], ono: '¡FSSSH!', onoX: 0.5, onoY: 0.2,
+            actores: [{ id: 'camazotz', x: 0.5, y: 1.0, esc: 1.2, brillo: '#b18cff' }],
+            textos: [{ tipo: 'caja', texto: 'Purificado, Camazotz ya no es el murciélago de la muerte, sino el guardián de la noche tranquila.' }]
+          },
+          {
+            fondo: 'xibalba',
+            actores: [{ id: 'hunahpu', x: 0.3, y: 0.95, esc: 3, dir: 2 }, { id: 'colibri', x: 0.72, y: 0.55, esc: 3, dir: 1, brillo: '#b18cff' }],
+            textos: [{ tipo: 'globo', texto: 'Te regaló el *Copal Puro*. Dice que el camino sigue por el cañón de Zipacná.', de: 1, ancho: 150 }]
+          }
+        ]
       }]
     },
 
@@ -135,15 +179,13 @@
         vinetas: [
           {
             fondo: 'xibalba', efectos: ['temblor', 'lineas'], sonido: 'tierra', ono: '¡BRUUUM!', onoX: 0.5, onoY: 0.25,
-            actores: [{ id: 'zipacna', x: 0.5, y: 1.05, esc: 2 }],
-            textos: [{ tipo: 'caja', texto: 'La montaña que Zipacná quería lanzar cayó sobre él, como en el antiguo relato.' }]
+            actores: [{ id: 'zipacna', x: 0.5, y: 1.05, esc: 1.4, brillo: '#c49a6c' }],
+            textos: [{ tipo: 'caja', texto: 'Zipacná dejó de cargar montañas por orgullo. Ahora las levanta para proteger a sus amigos.' }]
           },
           {
             fondo: 'palacio',
-            actores: [{ id: 'ixbalanque', x: 0.32, y: 0.95, esc: 3, dir: 2 }, { id: 'colibri', x: 0.7, y: 0.5, esc: 3, dir: 1, brillo: '#ffd166' }],
-            textos: [
-              { tipo: 'globo', texto: '¡Otra chispa de sol! Y detrás de la montaña... un portal a la *Casa de los Señores*.', de: 1, ancho: 150 }
-            ]
+            actores: [{ id: 'hunahpu', x: 0.32, y: 0.95, esc: 3, dir: 2 }, { id: 'colibri', x: 0.7, y: 0.5, esc: 3, dir: 1, brillo: '#3fd3a8' }],
+            textos: [{ tipo: 'globo', texto: '¡El *Jade Sagrado*! Ese portal lleva a la *Casa de los Señores*. Allí tienen a tu hermano.', de: 1, ancho: 150 }]
           }
         ]
       }]
@@ -152,25 +194,60 @@
     palacio: {
       musica: 'palacio',
       paginas: [{
-        disposicion: '3',
+        disposicion: '2h',
         vinetas: [
           {
             fondo: 'palacio', efectos: ['rgb'],
-            actores: [{ id: 'buhoTucur', x: 0.5, y: 0.95, esc: 2 }],
-            textos: [
-              { tipo: 'caja', texto: 'Un búho mensajero los esperaba en la entrada.' },
-              { tipo: 'globo', texto: 'Los Señores los invitan a pasar la noche en sus casas. Si salen con vida... los recibirán.', de: 0, ancho: 200, dx: 60 }
-            ]
+            actores: [{ id: 'hunCame', x: 0.3, y: 0.98, esc: 1.2 }, { id: 'vucubCame', x: 0.72, y: 0.98, esc: 1.2 }],
+            textos: [{ tipo: 'globo', texto: 'Que venga, que venga. Su hermano ya es nuestro guardián.', de: 0, ancho: 150, dx: 40 }]
           },
           {
             fondo: 'palacio',
-            actores: [{ id: 'hunahpu', x: 0.5, y: 0.98, esc: 2, dir: 0 }],
-            textos: [{ tipo: 'globo', texto: 'Las casas de prueba... nuestro padre no pudo con ellas.', de: 0, ancho: 140 }]
+            actores: [{ id: 'hunahpu', x: 0.5, y: 0.98, esc: 3, dir: 0 }],
+            textos: [{ tipo: 'globo', texto: 'Aguanta, hermano. Ya casi llego.', de: 0 }]
+          }
+        ]
+      }]
+    },
+
+    liberado: {
+      musica: 'final',
+      paginas: [{
+        disposicion: '3',
+        vinetas: [
+          {
+            fondo: 'oro', efectos: ['destello', 'lineas'], sonido: 'golpeFuerte', ono: '¡CRASH!', onoX: 0.5, onoY: 0.3,
+            actores: [{ id: 'ixbalanque', x: 0.5, y: 0.98, esc: 3, dir: 0 }],
+            textos: [{ tipo: 'caja', texto: 'El Sello Oscuro se rompió en mil pedazos de luz.' }]
           },
           {
             fondo: 'palacio',
-            actores: [{ id: 'ixbalanque', x: 0.5, y: 0.98, esc: 2, dir: 0 }],
-            textos: [{ tipo: 'globo', texto: 'Nosotros sí podremos. ¡Juntos!', de: 0 }]
+            actores: [{ id: 'ixbalanque', x: 0.5, y: 0.98, esc: 2, dir: 1 }],
+            textos: [{ tipo: 'globo', texto: '¿{H}? Te... ¡te recuerdo! Escuché tu voz todo el tiempo.', de: 0, ancho: 140 }]
+          },
+          {
+            fondo: 'palacio',
+            actores: [{ id: 'hunahpu', x: 0.5, y: 0.98, esc: 2, dir: 2 }],
+            textos: [{ tipo: 'globo', texto: 'Nunca te iba a dejar. ¡Juntos otra vez!', de: 0, ancho: 140 }]
+          }
+        ]
+      }]
+    },
+
+    avatar: {
+      musica: 'jefeFinal',
+      paginas: [{
+        disposicion: '2h',
+        vinetas: [
+          {
+            fondo: 'rojo', efectos: ['temblor', 'rgb'], sonido: 'camara',
+            actores: [{ id: 'hunCame', x: 0.3, y: 0.98, esc: 1.2 }, { id: 'vucubCame', x: 0.72, y: 0.98, esc: 1.2 }],
+            textos: [{ tipo: 'globo', texto: '¿Rompieron el sello? ¡Entonces seremos UNO!', de: 0, ancho: 150, dx: 40 }]
+          },
+          {
+            fondo: 'cieloOscuro', efectos: ['temblor', 'lineas'], ono: '¡GROOOM!', onoX: 0.5, onoY: 0.2,
+            actores: [{ id: 'avatar', x: 0.5, y: 1.0, esc: 1.2, brillo: '#ff2a6d' }],
+            textos: [{ tipo: 'caja', texto: 'Hun Camé y Vucub Camé se unieron: el *Avatar de la Noche Eterna*.', abajo: true }]
           }
         ]
       }]
@@ -184,13 +261,13 @@
           vinetas: [
             {
               fondo: 'palacio', efectos: ['destello', 'lineas'], sonido: 'golpeFuerte',
-              actores: [{ id: 'hunCame', x: 0.3, y: 0.98, esc: 2 }, { id: 'vucubCame', x: 0.72, y: 0.98, esc: 2 }],
-              textos: [{ tipo: 'caja', texto: 'Los Señores de Xibalbá cayeron de rodillas. La luz robada escapó de sus mantos.' }]
+              actores: [{ id: 'hunCame', x: 0.3, y: 0.98, esc: 1.2 }, { id: 'vucubCame', x: 0.72, y: 0.98, esc: 1.2 }],
+              textos: [{ tipo: 'caja', texto: 'La técnica *Sol y Luna* separó al Avatar. Los Señores huyeron a lo más hondo de Xibalbá.' }]
             },
             {
-              fondo: 'oro', efectos: ['rgb'], ono: '¡LUZ!', onoX: 0.5, onoY: 0.3,
+              fondo: 'oro', efectos: ['rgb'],
               actores: [{ id: 'hunahpu', x: 0.35, y: 0.98, esc: 3, dir: 3 }, { id: 'ixbalanque', x: 0.65, y: 0.98, esc: 3, dir: 3 }],
-              textos: [{ tipo: 'caja', texto: 'Las chispas del sol se juntaron en una sola llama, brillante y cálida.', abajo: true }]
+              textos: [{ tipo: 'caja', texto: 'Los espíritus de la guacamaya, el murciélago y la montaña los llevaron de vuelta a casa.', abajo: true }]
             }
           ]
         },
@@ -200,19 +277,19 @@
             {
               fondo: 'amanecer',
               actores: [{ id: 'abuela', x: 0.5, y: 0.98, esc: 2, dir: 0 }],
-              textos: [{ tipo: 'globo', texto: '¡El sol! ¡Mis niños lo lograron!', de: 0 }]
+              textos: [{ tipo: 'globo', texto: '¡Mis dos niños! ¡Volvieron juntos!', de: 0 }]
             },
             {
               fondo: 'amanecer',
               actores: [{ id: 'alux', x: 0.3, y: 0.9, esc: 3 }, { id: 'alux', x: 0.7, y: 0.85, esc: 2 }],
-              textos: [{ tipo: 'globo', texto: '¡Ji ji! ¡La milpa ya tiene calor!', de: 0 }]
+              textos: [{ tipo: 'globo', texto: '¡Ji ji! ¡Hay que hacer fiesta!', de: 0 }]
             },
             {
               fondo: 'noche',
               actores: [{ id: 'colibri', x: 0.5, y: 0.6, esc: 3, brillo: '#ffd166' }],
               textos: [
-                { tipo: 'caja', texto: 'Y como cuenta el Popol Vuh, los gemelos subieron al cielo: uno se volvió el *sol* y el otro la *luna*.' },
-                { tipo: 'globo', texto: 'Desde entonces cuidan juntos el día y la noche.', de: 0, ancho: 200, dy: 20 }
+                { tipo: 'caja', texto: 'Ningún sello puede borrar lo que dos hermanos se quieren.' },
+                { tipo: 'globo', texto: 'El sol y la luna brillan otra vez, uno junto al otro.', de: 0, ancho: 200, dy: 20 }
               ]
             }
           ]
@@ -223,32 +300,33 @@
 
   // ------------------------------ DIÁLOGOS ------------------------------
   const dialogos = {
-    ceiba: [di(TZ, 'La gran *ceiba*, el árbol sagrado. Para los mayas, sus raíces llegan a Xibalbá, su tronco vive en la tierra y sus ramas sostienen el cielo.')],
-    alux1: [di(ALUX, '¡Ji ji! Soy un alux. Cuido esta milpa y este monte.'), di(ALUX, 'Los bloques con cara de jaguar solo se mueven con fuerza de jaguar. ¡{I} tiene esa fuerza!')],
-    alux2: [di(ALUX, 'Psst... la cerbatana de {H} despierta los cristales dormidos, aunque estén al otro lado del agua.')],
-    alux3: [di(ALUX, 'Dicen que detrás de los arbustos de esta esquina hay un tesoro... ¡Pero yo no dije nada! ¡Ji ji!')],
-    estelaSelva: [di({ quien: 'Estela tallada' }, '"Antes de que hubiera sol, Vucub Caquix se alzaba orgulloso y decía: yo soy el sol, yo soy la luz, yo soy la luna."')],
-    estelaTemplo: [di({ quien: 'Glifos en la piedra' }, '"El jaguar movió la piedra pesada. El cazador despertó el cristal con su soplo."'), di(TZ, '¡Una pista! Bloques para Ixbalanqué, cristales para la cerbatana de Hunahpú.')],
-    estelaCruce: [di({ quien: 'Estela del cruce' }, '"Llegaron a un cruce de cuatro caminos: rojo, negro, blanco y amarillo. El camino negro les habló: yo soy el camino del Señor."'), di(TZ, 'En el relato, los otros caminos solo daban vueltas...')],
+    ceiba: [di(TZ, 'La gran *ceiba*, el árbol sagrado. Sus raíces llegan a Xibalbá. Vucub Caquix se esconde allí abajo otra vez.')],
+    alux1: [di(ALUX, '¡Ji ji! Soy un alux. Vi a tu hermano volar con un murciélago enorme... ¡Tenía los ojos morados!')],
+    alux2: [di(ALUX, 'Psst... tu cerbatana despierta los cristales dormidos, aunque estén al otro lado del agua.')],
+    alux3: [di(ALUX, 'Si empujas fuerte los bloques de piedra, se mueven. ¡Hasta yo puedo! Bueno... casi.')],
+    estelaSelva: [di({ quien: 'Estela tallada' }, '"Los jefes vencidos no se destruyen: se purifican. Su luz atrapada vuelve a ser buena."'), di(TZ, 'Cuando venzas a un jefe, usa *Espíritu → Purificar*. ¡Se volverá tu aliado!')],
+    estelaTemplo: [di({ quien: 'Glifos en la piedra' }, '"El cazador despertó el cristal con su soplo y movió la piedra pesada con paciencia."')],
+    estelaCruce: [di({ quien: 'Estela del cruce' }, '"Cuatro caminos: rojo, negro, blanco y amarillo. El camino negro habló: yo soy el camino del Señor."')],
     estelaFuego: [di({ quien: 'Glifos de fuego' }, '"El dardo que cruza el fuego se enciende." Alinea la cerbatana, el fuego del centro y cada brasero.')],
     estelaSol: [di({ quien: 'Estela del sol' }, '"El sol nace por el *este*, sube a lo más *alto* y se oculta por el *oeste*." Despierta los cristales en ese orden.')],
-    estelaPalacio: [di({ quien: 'Estela de los Señores' }, '"Casa de los Señores de Xibalbá. Tres casas de prueba guardan tres sellos. Solo quien los reúna verá a Hun Camé y Vucub Camé."')],
-    estelaOscura: [di({ quien: 'Estela' }, 'Al oeste: *Casa Oscura*. "No había luz en su interior, solo tinieblas."')],
-    estelaMurcielagos: [di({ quien: 'Estela' }, 'Al norte: *Casa de los Murciélagos*. "Adentro solo había murciélagos que chillaban y volaban."')],
-    estelaJaguares: [di({ quien: 'Estela' }, 'Al este: *Casa de los Jaguares*. "Llena de jaguares que se empujaban y se mordían."')]
+    estelaPalacio: [di({ quien: 'Estela de los Señores' }, '"Solo quien traiga Cacao, Copal y Jade podrá abrir la puerta del trono."')],
+    estelaCacao: [di({ quien: 'Estela' }, '"El *cacao* es la bebida de los dioses. Da fuerza al corazón."')],
+    estelaCopal: [di({ quien: 'Estela' }, '"El humo del *copal* sube al cielo y limpia lo que está sucio."')],
+    estelaJade: [di({ quien: 'Estela' }, '"El *jade* verde es la vida que nunca se acaba."')]
   };
 
   // ------------------------------ PISTAS ------------------------------
   const pistas = {
-    abuela: 'Hablen con su abuela Ixmucané. Está junto a su casa, a la izquierda del camino.',
-    templo: 'El templo está bajo las raíces de la gran ceiba, al norte, cruzando el puente del río. En el templo: la llave pequeña está en la sala del este; los bloques con cara de jaguar los mueve {I} y los cristales despiertan con la cerbatana de {H}.',
-    cuevas: 'El camino a Xibalbá está al noreste de la selva, junto a unas rocas. ¡Ya pueden bajar!',
-    cruce: 'Busquen el cruce de los cuatro caminos, al sur de donde llegamos. Recuerden el relato: el camino negro es el que lleva a Xibalbá.',
-    canon: 'El cañón de Meauán está al sureste de las cuevas, pasando el puente del río. Allí se esconde Zipacná.',
-    canonPistas: 'En el cañón: un dardo que atraviesa el fuego se enciende; alineen fuego y brasero. Los cristales se despiertan siguiendo el camino del sol: este, arriba, oeste. Las dos placas del oeste se presionan con un bloque... y con uno de ustedes.',
-    pruebas: 'Superen las tres casas del palacio: la Oscura (oeste), la de los Murciélagos (norte) y la de los Jaguares (este). Cada una guarda un sello.',
-    trono: '¡Tienen los tres sellos! Abran la gran puerta del norte del palacio. Los Señores los esperan. Descansen antes en el altar.',
-    fin: '¡Lo lograron! La luz volvió al mundo. Pueden seguir explorando y completar el bestiario.'
+    abuela: 'Habla con la abuela Ixmucané. Está junto a su casa, a la izquierda del camino.',
+    templo: 'Vucub Caquix está en las raíces de la gran ceiba, al norte, cruzando el puente. Cuando lo venzas, ¡purifícalo con Espíritu!',
+    duelo: 'Vuelve a la selva por el portal. Siento la presencia de tu hermano...',
+    cuevas: 'El camino a Xibalbá está al noreste de la selva, junto a unas rocas.',
+    cruce: 'Busca el cruce de los cuatro caminos, al sur. El camino negro es el que lleva a Xibalbá. Hay una reliquia en la sala del noreste.',
+    camazotz: 'Camazotz vigila la escalera del sureste de las cuevas. Es débil al fuego: ¡usa el Dardo de fuego!',
+    canon: 'El cañón de Meauán está bajando la escalera del sureste. Zipacná guarda el Jade Sagrado.',
+    canonPistas: 'En el cañón: un dardo que atraviesa el fuego se enciende. Los cristales siguen el camino del sol: este, arriba, oeste. Las placas se presionan con un bloque y contigo.',
+    trono: '¡Tienes las tres reliquias! Abre la puerta del norte del palacio. No hieras a tu hermano: purifica su sello o usa las reliquias.',
+    fin: '¡Lo lograron! Ahora pueden explorar juntos y completar el bestiario.'
   };
 
   // ------------------------------ POPOL VUH ------------------------------
@@ -265,5 +343,5 @@
   ];
 
   G.mundoMaya = G.mundoMaya || {};
-  Object.assign(G.mundoMaya, { historia, dialogos, pistas, fragmentos, TZ, AB, HU, IX, di });
+  Object.assign(G.mundoMaya, { historia, dialogos, pistas, fragmentos, TZ, AB, HU, IX, IXP, ESP, di });
 })();

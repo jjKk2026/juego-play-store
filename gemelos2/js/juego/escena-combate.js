@@ -184,7 +184,7 @@
     *accionHeroe(h, a) {
       const s = this.s;
       if (a.tipo === 'atacar') {
-        const t = a.objetivo;
+        const t = Array.isArray(a.objetivo) ? a.objetivo[0] : a.objetivo;
         const [cx] = this.centro(t);
         yield* this.moverA(h, cx - h.x + 28, t.y - h.y + 4, 0.22);
         // anillo del golpe preciso
