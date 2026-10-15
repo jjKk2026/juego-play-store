@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+// En GitHub Actions cada compilación sube el número de versión, así el APK
+// nuevo se instala encima del anterior sin borrar la partida guardada.
+def numero = (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as Integer
+
+android {
+    namespace 'co.gemelosdelsol.juego'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'co.gemelosdelsol.juego2'
+        minSdk 24
+        targetSdk 34
+        versionCode numero
+        versionName "1.0.${numero}"
+    }
+
+    // Llave de firma fija: todas las versiones deben firmarse igual para poder
+    // actualizar el juego sin desinstalarlo (desinstalar borra la partida).
+    // Si existe el secreto GEMELOS_KEYSTORE en GitHub, se usa ese; si no, el de este repositorio.
+    signingConfigs {
+        release {
+            def externa = System.getenv('GEMELOS_KEYSTORE_FILE')
+            storeFile file(externa ?: 'gemelos-release.keystore')
+            storePassword System.getenv('GEMELOS_KEYSTORE_PASSWORD') ?: 'gemelos-del-sol'
+            keyAlias System.getenv('GEMELOS_KEY_ALIAS') ?: 'gemelos'
+            keyPassword System.getenv('GEMELOS_KEYSTORE_PASSWORD') ?: 'gemelos-del-sol'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.12.1'
+}

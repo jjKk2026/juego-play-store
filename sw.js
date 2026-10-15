@@ -1,7 +1,7 @@
 /* Service worker: guarda el juego en el dispositivo para que funcione sin internet.
    IMPORTANTE: cambia el número de VERSION cada vez que publiques cambios,
    así los jugadores reciben la versión nueva. */
-const VERSION = 'gemelos-v2';
+const VERSION = 'gemelos-v3';
 const ARCHIVOS = [
   './',
   './index.html',
@@ -50,7 +50,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((claves) => Promise.all(claves.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
+      .then((claves) => Promise.all(claves.filter((k) => k.startsWith('gemelos-v') && k !== VERSION).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -58,7 +58,9 @@ self.addEventListener('activate', (e) => {
 // Primero la copia guardada (rápido y sin internet); en segundo plano se actualiza.
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== self.location.origin) return;
+  const url = new URL(req.url);
+  // El segundo juego (carpeta gemelos2/) tiene su propio service worker.
+  if (req.method !== 'GET' || url.origin !== self.location.origin || url.pathname.includes('/gemelos2/')) return;
   e.respondWith(
     caches.open(VERSION).then(async (cache) => {
       const clave = req.mode === 'navigate' ? './index.html' : req;

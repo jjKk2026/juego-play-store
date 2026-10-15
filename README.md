@@ -7,6 +7,8 @@ RPG de aventura en pixel art inspirado en el **Popol Vuh**. Los Gemelos Héroes,
 - Se juega en el navegador (computador, iPad, celular) y como **APK de Android**.
 - Todo el arte, la música y los sonidos están hechos con código: no hay imágenes ni audios copiados.
 
+> **¡Hay una segunda parte!** *Gemelos del Sol 2 · El Sello de Camazotz* está en la carpeta [`gemelos2/`](gemelos2/README.md). En la web se juega en `https://<tu-usuario>.github.io/juego-play-store/gemelos2/` y en Android es un APK aparte (`GemelosDelSol2-….apk`).
+
 ## Qué tiene
 
 | Parte | Detalle |
@@ -84,7 +86,7 @@ En `js/juego/mundos.js` ya están anotados los próximos mundos; aparecen como "
 ## Publicar
 
 - **Web (GitHub Pages):** Settings → Pages → Branch `main` / carpeta `/ (root)`. El juego queda en `https://<tu-usuario>.github.io/juego-play-store/`. Si cambias el juego, sube el número de `VERSION` en `sw.js` para que los dispositivos reciban la versión nueva.
-- **Android:** cada cambio en `main` compila un APK y lo publica en **Releases** (`GemelosDelSol-1.0.N.apk`). Si instalas una versión nueva encima de la anterior, la partida se conserva. No desinstales el juego para actualizarlo, porque desinstalar borra la partida.
+- **Android:** cada cambio en `main` compila dos APK (juego 1 y juego 2) y los publica en **Releases** (`GemelosDelSol-1.0.N.apk` y `GemelosDelSol2-1.0.N.apk`). Si instalas una versión nueva encima de la anterior, la partida se conserva. No desinstales el juego para actualizarlo, porque desinstalar borra la partida.
 
 La llave de firma del APK (`android/app/gemelos-release.keystore`) está en el repositorio para que todas las versiones se firmen igual. Si el repositorio es público y quieres una llave privada, guárdala en Settings → Secrets como `GEMELOS_KEYSTORE` (en base64) y `GEMELOS_KEYSTORE_PASSWORD`, y el workflow usará esa.
 
