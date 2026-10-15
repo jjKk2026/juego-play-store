@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Gemelos del Sol 2 · El Sello de Camazotz</title>
+  <meta name="description" content="RPG de aventura inspirado en el Popol Vuh: Hunahpú debe liberar a su hermano Ixbalanqué del Sello de Camazotz.">
+  <meta name="theme-color" content="#0d0618">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gemelos del Sol 2">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="iconos/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/juego.css">
+</head>
+<body>
+  <div id="app">
+    <div id="pantalla">
+      <canvas id="lienzo" width="384" height="216" aria-label="Pantalla del juego"></canvas>
+      <div id="cargando">Cargando…</div>
+    </div>
+
+    <!-- Botones arriba: silencio (siempre visible) y pausa (táctil) -->
+    <button id="btn-silencio" class="btn-esquina" aria-label="Silenciar">🔊</button>
+    <button id="btn-pausa" class="btn-esquina tactil-solo" data-boton="pausa" aria-label="Pausa">❚❚</button>
+
+    <!-- Controles táctiles (se muestran en iPad y celulares) -->
+    <div id="controles" class="tactil-solo" aria-hidden="true">
+      <div id="cruceta">
+        <span class="flecha arriba"></span><span class="flecha abajo"></span>
+        <span class="flecha izquierda"></span><span class="flecha derecha"></span>
+        <span class="centro"></span>
+      </div>
+      <div id="botones">
+        <button class="btn-accion btn-x" data-boton="x" aria-label="Botón X">X</button>
+        <button class="btn-accion btn-b" data-boton="b" aria-label="Botón B">B</button>
+        <button class="btn-accion btn-a" data-boton="a" aria-label="Botón A">A</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript>Este juego necesita JavaScript activado.</noscript>
+
+  <!-- Motor (piezas generales, sirven para cualquier mundo) -->
+  <script src="js/motor/utilidades.js"></script>
+  <script src="js/motor/fuente.js"></script>
+  <script src="js/motor/pixel.js"></script>
+  <script src="js/motor/entrada.js"></script>
+  <script src="js/motor/audio.js"></script>
+  <script src="js/motor/guardado.js"></script>
+  <script src="js/motor/efectos.js"></script>
+  <script src="js/motor/ui.js"></script>
+  <script src="js/motor/nucleo.js"></script>
+
+  <!-- Juego (reglas, arte, escenas) -->
+  <script src="js/juego/volumen.js"></script>
+  <script src="js/juego/datos.js"></script>
+  <script src="js/juego/reglas.js"></script>
+  <script src="js/juego/mundos.js"></script>
+  <script src="js/juego/arte.js"></script>
+  <script src="js/juego/losetas.js"></script>
+  <script src="js/juego/musica.js"></script>
+  <script src="js/juego/estado.js"></script>
+
+  <!-- Combate (clases: Personaje, SistemaCombate, MenuAcciones) -->
+  <script src="js/combate/personaje.js"></script>
+  <script src="js/combate/sistema.js"></script>
+  <script src="js/combate/menu-acciones.js"></script>
+
+  <script src="js/juego/escena-comic.js"></script>
+  <script src="js/juego/escena-combate.js"></script>
+  <script src="js/juego/escena-mapa.js"></script>
+  <script src="js/juego/escena-pausa.js"></script>
+  <script src="js/juego/escena-bestiario.js"></script>
+  <script src="js/juego/escena-nombre.js"></script>
+  <script src="js/juego/escena-titulo.js"></script>
+
+  <!-- Mundos (cada cultura en su carpeta) -->
+  <script src="js/mundos/maya2/criaturas.js"></script>
+  <script src="js/mundos/maya2/arte-criaturas.js"></script>
+  <script src="js/mundos/maya2/musica.js"></script>
+  <script src="js/mundos/maya2/historia.js"></script>
+  <script src="js/mundos/maya2/mapas.js"></script>
+  <script src="js/mundos/maya2/mundo.js"></script>
+
+  <!-- Arranque -->
+  <script src="js/principal.js"></script>
+</body>
+</html>
