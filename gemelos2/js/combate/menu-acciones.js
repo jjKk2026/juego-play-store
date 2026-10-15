@@ -89,6 +89,7 @@
       const tipo = this.actual.tipo;
       if (tipo === 'principal') {
         const v = r.opcion.valor;
+        this.opciones = this.sistema.opciones(this.heroe);   // el límite o los PE pudieron cambiar
         if (v === 'atacar') return this.elegirObjetivo('enemigo', (t) => ({ tipo: 'atacar', objetivo: t }));
         if (v === 'defender') return { tipo: 'defender' };
         if (v === 'magia') return this.submenu('magia', this.opciones.magia, 'Magia (PE)'), null;
@@ -153,8 +154,8 @@
       this.pila.forEach((p) => p.menu.dibujar(ctx));
       const d = this.descripcion();
       if (d) {
-        const lineas = G.fuente.envolver(d, 210);
-        G.ui.ventana(ctx, 158, 4, 222, lineas.length * 11 + 8, { borde: COL.borde2 });
+        const lineas = G.fuente.envolver(d, 184);
+        G.ui.ventana(ctx, 158, 4, 196, lineas.length * 11 + 8, { borde: COL.borde2 });
         lineas.forEach((l, i) => G.fuente.texto(ctx, l, 164, 8 + i * 11, COL.texto, { sombra: COL.sombra }));
       }
     }

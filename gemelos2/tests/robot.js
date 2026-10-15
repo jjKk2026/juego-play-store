@@ -217,6 +217,13 @@
       if (p.empujar) {
         const [hx, hy] = p.hasta;
         if (esc.objetoEn(hx, hy, (o) => o.tipo === 'bloque')) { this.soltarTodo(); return this.avanzar(); }
+        // si un enemigo se para delante del bloque, se pelea con él (como haría un jugador)
+        if (this.tPaso > 4 && Math.floor(this.tPaso) !== Math.floor(this.tPaso - dt)) {
+          const b = esc.objetos.filter((o) => o.tipo === 'bloque').sort((x, y) => Math.hypot(x.x - hx, x.y - hy) - Math.hypot(y.x - hx, y.y - hy))[0];
+          const e = b && esc.enemigos.find((en) => Math.hypot(en.x - (b.x * T + 8), en.y - (b.y * T + 8)) < 48);
+          if (window.ROBOT_DEBUG || this.tPaso > 20) this.registrar(`empujando: bloque en ${b && [b.x, b.y]}, yo en ${this.pos(esc)}, enemigo cerca: ${!!e}`);
+          if (e) { this.registrar('Un enemigo estorba el bloque: ¡a pelear!'); esc.iniciarCombate(e); return; }
+        }
         this.mantener(p.empujar);
         return;
       }

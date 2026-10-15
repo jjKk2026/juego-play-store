@@ -94,6 +94,13 @@
     fundido(fn, op) {
       op = op || {};
       const dur = op.dur || 0.3;
+      // Si otro fundido todavía no hizo su cambio (por ejemplo, un cómic que se
+      // cierra y otro que se abre enseguida), se hacen los dos cambios en orden.
+      if (transicion && transicion.fase === 'sale' && !transicion.ejecutando) {
+        const antes = transicion.fn;
+        transicion.fn = () => { antes && antes(); fn(); };
+        return;
+      }
       // Si la pantalla ya está oscura (otro fundido terminando), se empieza "ya oscuro".
       const yaOscuro = transicion && transicion.ejecutando;
       transicion = { fase: 'sale', t: yaOscuro ? dur : 0, dur, fn, color: op.color || '#000', estilo: op.estilo || 'negro' };
